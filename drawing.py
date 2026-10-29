@@ -12,11 +12,16 @@ def draw_cells(game, screen):
                 py.draw.rect(screen, (0,)*3, (x, y, CELL_SIZE, CELL_SIZE), 1)
 
 def draw_debug(game, screen):
-    pass
+    print(
+        f"""Paused: {game.paused} \n
+        Updates/s {game.updates_per_second} \n
+        Camera zoom: {game.camera.zoom}"""
+    )
 
 def draw(game):
     screen = game.screen
     
     screen.fill((0,)*3)
     draw_cells(game, screen)
-    draw_debug(game, screen)
+    if game.debug:
+        draw_debug(game, screen)

@@ -37,7 +37,7 @@ class Game:
                 self.frames_since_update += 1
 
             handle_input(self)
-            if round(self.frames_since_update, 12) == (1 / FRAME_TIME) / self.updates_per_second:
+            if round(self.frames_since_update, 12) >= (1 / FRAME_TIME) / self.updates_per_second:
                 self.frames_since_update = 0
                 update(self)
             draw(self)

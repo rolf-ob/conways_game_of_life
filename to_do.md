@@ -1,5 +1,3 @@
-- Stepping through updates
-- Changing updates/s
 - Frame limiter busy wait fix
 - Debug screen
 - Camera zoom

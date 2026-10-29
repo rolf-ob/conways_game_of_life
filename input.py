@@ -18,7 +18,7 @@ def kill_cell(game, x, y):
         game.cells[grid_x][grid_y].alive = False
 
 def zoom(game, y):
-    game.camera.zoom += y
+    game.camera.zoom = max(1, game.camera.zoom + y)
 
 def handle_input(game):
     keys = py.key.get_pressed()
@@ -49,7 +49,24 @@ def handle_input(game):
             if event.key == py.K_SPACE:
                 game.paused = not game.paused
 
-            elif event.key == py.K_RETURN:
+            elif event.key == py.K_q:
+                game.frames_since_update = 0
+
+                if game.updates_per_second > 0.1:
+                    if game.updates_per_second <= 1:
+                        game.updates_per_second = round(game.updates_per_second - 0.1, 1)
+                    else:
+                        game.updates_per_second -= 1
+
+            elif event.key == py.K_e:
+                game.frames_since_update = 0
+
+                if game.updates_per_second < 1:
+                    game.updates_per_second = round(game.updates_per_second + 0.1, 1)
+                else:
+                    game.updates_per_second += 1
+
+            elif event.key == py.K_TAB:
                 game.frames_since_update = (1 / FRAME_TIME) / game.updates_per_second
             
             elif event.key == py.K_F3:
