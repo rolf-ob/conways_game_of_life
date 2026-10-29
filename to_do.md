@@ -1,0 +1,4 @@
+- Click to place cell at mouse
+- Cell rules
+- Camera zoom
+- Debug screen
