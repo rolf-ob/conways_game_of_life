@@ -5,7 +5,7 @@ from drawing import draw
 from camera import Camera
 from cell import Cell
 from frame_limiter import FrameLimiter
-from constants import WIDTH, HEIGHT
+from constants import WIDTH, HEIGHT, CELL_SIZE
 
 class Game:
     def __init__(self):
@@ -13,13 +13,15 @@ class Game:
 
         self.running = True
 
-        self.cells = [
-            Cell(column * 20, row * 20)
-            for row in range(HEIGHT // 20)
-            for column in range(WIDTH // 20)
-        ]
-
         self.debug = False
+
+        self.cells = [
+            [
+                Cell(column * CELL_SIZE, row * CELL_SIZE)
+                for row in range(HEIGHT // CELL_SIZE)
+            ]
+            for column in range(WIDTH // CELL_SIZE)
+        ]
 
         self.camera = Camera(0, 0, 1)
         self.frame_limiter = FrameLimiter()

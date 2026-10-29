@@ -1,16 +1,15 @@
 import pygame as py
 
-def world_to_screen(game, world_x, world_y):
-    screen_x = world_x - game.camera.x
-    screen_y = world_y - game.camera.y
-
-    return screen_x, screen_y
+from spatial import world_to_screen
+from constants import CELL_SIZE
 
 def draw_cells(game, screen):
-    for cell in game.cells:
-        x, y = world_to_screen(game, cell.x, cell.y)
-        py.draw.rect(screen, (255,)*3, (x, y, 20, 20))
-        py.draw.rect(screen, (0,)*3, (x, y, 20, 20), 1)
+    for row in game.cells:
+        for cell in row:
+            if cell.alive:
+                x, y = world_to_screen(game, cell.x, cell.y)
+                py.draw.rect(screen, (255,)*3, (x, y, CELL_SIZE, CELL_SIZE))
+                py.draw.rect(screen, (0,)*3, (x, y, CELL_SIZE, CELL_SIZE), 1)
 
 def draw_debug(game, screen):
     pass

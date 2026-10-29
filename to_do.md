@@ -1,4 +1,6 @@
-- Click to place cell at mouse
 - Cell rules
-- Camera zoom
+- Frame limiter busy wait fix
 - Debug screen
+- Camera zoom
+- Storing cell structures
+- Keybind to place cell at saved location
