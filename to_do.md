@@ -1,4 +1,3 @@
-- Pausing updates
 - Stepping through updates
 - Changing updates/s
 - Frame limiter busy wait fix

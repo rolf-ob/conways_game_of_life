@@ -14,8 +14,9 @@ class Game:
 
         self.running = True
 
+        self.paused = False
         self.frames_since_update = 0
-        self.updates_per_second = 2
+        self.updates_per_second = 1
         self.debug = False
 
         self.cells = [
@@ -32,7 +33,8 @@ class Game:
 
     def run(self):
         while self.running:
-            self.frames_since_update += 1
+            if not self.paused:
+                self.frames_since_update += 1
 
             handle_input(self)
             if round(self.frames_since_update, 12) == (1 / FRAME_TIME) / self.updates_per_second:
