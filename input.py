@@ -15,6 +15,7 @@ def zoom(game, y):
 
 def handle_input(game):
     keys = py.key.get_pressed()
+    clicking = py.mouse.get_pressed()
     
     if keys[py.K_w]:
         game.camera.y -= 10
@@ -24,6 +25,10 @@ def handle_input(game):
         game.camera.y += 10
     if keys[py.K_d]:
         game.camera.x += 10
+
+    if keys[py.K_LSHIFT] and clicking[0]:
+        mouse_x, mouse_y = py.mouse.get_pos()
+        heal_cell(game, *screen_to_world(game, mouse_x, mouse_y))
 
     for event in py.event.get():
         if event.type == py.QUIT:

@@ -6,7 +6,7 @@ from drawing import draw
 from camera import Camera
 from cell import Cell
 from frame_limiter import FrameLimiter
-from constants import WIDTH, HEIGHT, CELL_SIZE, FRAME_TIME, UPDATES_PER_SECOND
+from constants import WIDTH, HEIGHT, CELL_SIZE, FRAME_TIME
 
 class Game:
     def __init__(self):
@@ -15,6 +15,7 @@ class Game:
         self.running = True
 
         self.frames_since_update = 0
+        self.updates_per_second = 2
         self.debug = False
 
         self.cells = [
@@ -24,8 +25,6 @@ class Game:
             ]
             for column in range(WIDTH // CELL_SIZE)
         ]
-        self.cells[2][2].alive = True
-        self.cells[3][2].alive = True
 
         self.camera = Camera(0, 0, 1)
         self.frame_limiter = FrameLimiter()
@@ -36,7 +35,7 @@ class Game:
             self.frames_since_update += 1
 
             handle_input(self)
-            if round(self.frames_since_update, 12) == (1 / FRAME_TIME) / UPDATES_PER_SECOND:
+            if round(self.frames_since_update, 12) == (1 / FRAME_TIME) / self.updates_per_second:
                 self.frames_since_update = 0
                 update(self)
             draw(self)
