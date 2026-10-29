@@ -1,11 +1,12 @@
 import pygame as py
 
 from input import handle_input
+from physics import update
 from drawing import draw
 from camera import Camera
 from cell import Cell
 from frame_limiter import FrameLimiter
-from constants import WIDTH, HEIGHT, CELL_SIZE
+from constants import WIDTH, HEIGHT, CELL_SIZE, FRAME_TIME, UPDATES_PER_SECOND
 
 class Game:
     def __init__(self):
@@ -13,6 +14,7 @@ class Game:
 
         self.running = True
 
+        self.frames_since_update = 0
         self.debug = False
 
         self.cells = [
@@ -22,6 +24,8 @@ class Game:
             ]
             for column in range(WIDTH // CELL_SIZE)
         ]
+        self.cells[2][2].alive = True
+        self.cells[3][2].alive = True
 
         self.camera = Camera(0, 0, 1)
         self.frame_limiter = FrameLimiter()
@@ -29,7 +33,12 @@ class Game:
 
     def run(self):
         while self.running:
+            self.frames_since_update += 1
+
             handle_input(self)
+            if round(self.frames_since_update, 12) == (1 / FRAME_TIME) / UPDATES_PER_SECOND:
+                self.frames_since_update = 0
+                update(self)
             draw(self)
 
             py.display.flip()

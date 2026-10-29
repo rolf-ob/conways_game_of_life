@@ -4,8 +4,8 @@ from spatial import world_to_screen
 from constants import CELL_SIZE
 
 def draw_cells(game, screen):
-    for row in game.cells:
-        for cell in row:
+    for column in game.cells:
+        for cell in column:
             if cell.alive:
                 x, y = world_to_screen(game, cell.x, cell.y)
                 py.draw.rect(screen, (255,)*3, (x, y, CELL_SIZE, CELL_SIZE))

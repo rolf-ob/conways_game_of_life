@@ -1,5 +1,5 @@
 class Cell:
-    def __init__(self, x, y):
+    def __init__(self, x, y, alive=False):
         self.x = x
         self.y = y
-        self.alive = False
+        self.alive = alive

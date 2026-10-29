@@ -1,6 +1,5 @@
-- Cell rules
 - Frame limiter busy wait fix
 - Debug screen
 - Camera zoom
-- Storing cell structures
 - Keybind to place cell at saved location
+- Storing cell structures
