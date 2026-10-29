@@ -2,7 +2,9 @@ import pygame as py
 
 from input import handle_input
 from drawing import draw
+from cell import Cell
 from frame_limiter import FrameLimiter
+from constants import WIDTH, HEIGHT
 
 class Game:
     def __init__(self):
@@ -10,7 +12,12 @@ class Game:
 
         self.running = True
 
-        self.screen = py.display.set_mode((1440, 720), py.RESIZABLE)
+        self.cells = []
+        for row in range(HEIGHT // 20):
+            for column in range(WIDTH // 20):
+                self.cells.append(Cell(column * 20, row * 20))
+
+        self.screen = py.display.set_mode((WIDTH, HEIGHT), py.RESIZABLE)
         self.frame_limiter = FrameLimiter()
 
     def run(self):
