@@ -1,4 +1,3 @@
-- Folders
 - Buttons
 - Sprites
 - Custom cell color rules

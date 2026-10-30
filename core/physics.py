@@ -1,4 +1,4 @@
-from cell import Cell
+from entities.cell import Cell
 from constants import CELL_SIZE
 
 def get_cell_condition(game, cell):

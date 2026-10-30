@@ -2,12 +2,12 @@ import pygame as py
 
 from collections import defaultdict
 
-from input import handle_input
-from physics import update
-from drawing import draw
-from camera import Camera
-from frame_limiter import FrameLimiter
-from textcache import TextCache
+from core.input import handle_input
+from core.physics import update
+from rendering.drawing import draw
+from rendering.textcache import TextCache
+from entities.camera import Camera
+from entities.frame_limiter import FrameLimiter
 from constants import WIDTH, HEIGHT, FRAME_TIME, FONT_SIZE
 
 class Game:

@@ -1,7 +1,9 @@
 import pygame as py
 
-from spatial import screen_to_world
-from cell import Cell
+from collections import defaultdict
+
+from core.spatial import screen_to_world
+from entities.cell import Cell
 from constants import CELL_SIZE, FRAME_TIME
 
 def heal_cell(game, x, y):
@@ -12,9 +14,24 @@ def heal_cell(game, x, y):
 def kill_cell(game, x, y):
     grid_x = x // CELL_SIZE * CELL_SIZE
     grid_y = y // CELL_SIZE * CELL_SIZE
-    
+
     if grid_x in game.cells and grid_y in game.cells[grid_x]:
         del game.cells[grid_x][grid_y]
+
+def change_speed(game, way):
+    game.frames_since_update = 0
+
+    micro = True if (
+        way == "down" and game.updates_per_second <= 1 or
+        way == "up" and game.updates_per_second < 1
+        ) else False
+    change = -1 if way == "down" else 1
+
+    if game.updates_per_second > 0.1 or change == 1:
+        if micro:
+            game.updates_per_second = round(game.updates_per_second + change/10, 1)
+        else:
+            game.updates_per_second += change
 
 def zoom(game, y):
     if y > 0:
@@ -55,21 +72,13 @@ def handle_input(game):
                 game.paused = not game.paused
 
             elif event.key == py.K_q:
-                game.frames_since_update = 0
-
-                if game.updates_per_second > 0.1:
-                    if game.updates_per_second <= 1:
-                        game.updates_per_second = round(game.updates_per_second - 0.1, 1)
-                    else:
-                        game.updates_per_second -= 1
+                change_speed(game, "down")
 
             elif event.key == py.K_e:
-                game.frames_since_update = 0
+                change_speed(game, "up")
 
-                if game.updates_per_second < 1:
-                    game.updates_per_second = round(game.updates_per_second + 0.1, 1)
-                else:
-                    game.updates_per_second += 1
+            elif event.key == py.K_r:
+                game.cells = defaultdict(dict)
 
             elif event.key == py.K_TAB:
                 game.frames_since_update = (1 / FRAME_TIME) / game.updates_per_second

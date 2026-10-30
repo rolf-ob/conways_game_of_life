@@ -30,8 +30,8 @@ def draw_debug(game, screen):
         f"FPS {game.frame_limiter.get_fps()}",
         f"Paused: {game.paused}",
         f"Updates/s {game.updates_per_second}",
-        f"Position: {game.camera.x} / {game.camera.y}",
-        f"Camera zoom: {game.camera.zoom}"
+        f"Position: {int(game.camera.x)} / {int(game.camera.y)}",
+        f"Camera zoom: {int(game.camera.zoom)}"
     ]
 
     for i, line in enumerate(debug_screen):
