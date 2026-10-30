@@ -18,9 +18,12 @@ class Game:
 
         self.paused = False
         self.frames_since_update = 0
-        self.updates_per_second = 1
+        self.updates_per_second = 10
         self.width = WIDTH
         self.height = HEIGHT
+        self.box_start = None
+        self.box_end = None
+        self.show_grid = True
         self.debug = False
         self.cells = defaultdict(dict)
 

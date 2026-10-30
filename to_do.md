@@ -1,5 +1,7 @@
+- Box selection
+- Deleting and moving
 - Buttons
 - Sprites
-- Custom cell color rules
-- Keybind to place cell at saved location
 - Storing cell structures
+- Keybind to place/remove structure at saved location
+- Custom cell color rules

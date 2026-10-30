@@ -37,7 +37,7 @@ def zoom(game, y):
     if y > 0:
         game.camera.zoom = game.camera.zoom + game.camera.zoom / 10 * y
     else:
-        game.camera.zoom = max(15, game.camera.zoom + game.camera.zoom / 10 / y)
+        game.camera.zoom = max(5, game.camera.zoom + game.camera.zoom / 10 / y)
 
 def handle_input(game):
     keys = py.key.get_pressed()
@@ -60,6 +60,15 @@ def handle_input(game):
         mouse_x, mouse_y = py.mouse.get_pos()
         kill_cell(game, *screen_to_world(game, mouse_x, mouse_y))
 
+    if keys[py.K_LCTRL] and clicking[2]:
+        if not game.box_start:
+            game.box_start = py.mouse.get_pos()
+        game.box_end = py.mouse.get_pos()
+
+    else:
+        game.box_start = None
+        game.box_end = None
+
     for event in py.event.get():
         if event.type == py.QUIT:
             game.running = False
@@ -79,6 +88,9 @@ def handle_input(game):
 
             elif event.key == py.K_r:
                 game.cells = defaultdict(dict)
+
+            elif event.key == py.K_g:
+                game.show_grid = not game.show_grid
 
             elif event.key == py.K_TAB:
                 game.frames_since_update = (1 / FRAME_TIME) / game.updates_per_second
