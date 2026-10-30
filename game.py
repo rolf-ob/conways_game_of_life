@@ -6,7 +6,8 @@ from drawing import draw
 from camera import Camera
 from cell import Cell
 from frame_limiter import FrameLimiter
-from constants import WIDTH, HEIGHT, CELL_SIZE, FRAME_TIME
+from textcache import TextCache
+from constants import WIDTH, HEIGHT, CELL_SIZE, FRAME_TIME, FONT_SIZE
 
 class Game:
     def __init__(self):
@@ -28,6 +29,8 @@ class Game:
         ]
 
         self.camera = Camera(0, 0, 1)
+        self.font = py.font.SysFont("Arial", FONT_SIZE)
+        self.text_cache = TextCache(self.font)
         self.frame_limiter = FrameLimiter()
         self.screen = py.display.set_mode((WIDTH, HEIGHT), py.RESIZABLE)
 

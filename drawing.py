@@ -12,11 +12,17 @@ def draw_cells(game, screen):
                 py.draw.rect(screen, (0,)*3, (x, y, CELL_SIZE, CELL_SIZE), 1)
 
 def draw_debug(game, screen):
-    print(
-        f"""Paused: {game.paused} \n
-        Updates/s {game.updates_per_second} \n
-        Camera zoom: {game.camera.zoom}"""
-    )
+    margin = 40
+    debug_screen = [
+        f"FPS {game.frame_limiter.get_fps()}",
+        f"Paused: {game.paused}",
+        f"Updates/s {game.updates_per_second}",
+        f"Position: {game.camera.x} / {game.camera.y}",
+        f"Camera zoom: {game.camera.zoom}"
+    ]
+
+    for i, line in enumerate(debug_screen):
+        screen.blit(game.text_cache.get_surface(line, "screen", (255,)*3), (margin, margin + i*20))
 
 def draw(game):
     screen = game.screen
