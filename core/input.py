@@ -6,32 +6,59 @@ from core.spatial import screen_to_world
 from entities.cell import Cell
 from constants import CELL_SIZE, FRAME_TIME
 
+def heal_cells(game, mouse_x, mouse_y):    
+    if game.last_click and game.last_click != (mouse_x, mouse_y):
+        dx = (mouse_x - game.last_click[0])
+        dy = (mouse_y - game.last_click[1])
+        step = abs(dx) if abs(dx) >= abs(dy) else abs(dy)
+        dx /= step
+        dy /= step
+        x = game.last_click[0]
+        y = game.last_click[1]
+
+        for _ in range(step):
+            heal_cell(game, int(x // CELL_SIZE * CELL_SIZE), int(y // CELL_SIZE * CELL_SIZE))
+            x += dx
+            y += dy
+
+    heal_cell(game, mouse_x, mouse_y)
+
 def heal_cell(game, x, y):
     grid_x = x // CELL_SIZE * CELL_SIZE
     grid_y = y // CELL_SIZE * CELL_SIZE
     game.cells[grid_x][grid_y] = Cell(grid_x, grid_y)
 
-def kill_cell(game, x, y):
+def select_cell(game, x, y):
     grid_x = x // CELL_SIZE * CELL_SIZE
     grid_y = y // CELL_SIZE * CELL_SIZE
 
     if grid_x in game.cells and grid_y in game.cells[grid_x]:
-        del game.cells[grid_x][grid_y]
+        cell = game.cells[grid_x][grid_y]
 
-def change_speed(game, way):
-    game.frames_since_update = 0
+        cell.selected = not cell.selected
+        if cell.selected:
+            game.selected_cells.append(cell)
+        else:
+            game.selected_cells.remove(cell)
 
+def kill_cells(game):
+    for cell in game.selected_cells.copy():
+        del game.cells[cell.x][cell.y]
+        game.selected_cells.remove(cell)
+
+def change_speed(game, way, shift):
     micro = True if (
         way == "down" and game.updates_per_second <= 1 or
         way == "up" and game.updates_per_second < 1
         ) else False
     change = -1 if way == "down" else 1
+    if shift and not (micro and way == "down"):
+        change *= 10
 
-    if game.updates_per_second > 0.1 or change == 1:
-        if micro:
-            game.updates_per_second = round(game.updates_per_second + change/10, 1)
-        else:
-            game.updates_per_second += change
+    if micro:
+        game.updates_per_second = max(0.1, round(game.updates_per_second + change/10, 1))
+    else:
+        game.updates_per_second = max(0.1, round(game.updates_per_second + change))
 
 def zoom(game, y):
     if y > 0:
@@ -53,18 +80,17 @@ def handle_input(game):
         game.camera.x += 600 / game.camera.zoom
 
     if keys[py.K_LSHIFT] and clicking[0]:
-        mouse_x, mouse_y = py.mouse.get_pos()
-        heal_cell(game, *screen_to_world(game, mouse_x, mouse_y))
-    
+        mouse_x, mouse_y = [axis // CELL_SIZE * CELL_SIZE for axis in screen_to_world(game, *py.mouse.get_pos())]
+        heal_cells(game, mouse_x, mouse_y)
+        game.last_click = mouse_x, mouse_y
+    else:
+        game.last_click = None
+
     if keys[py.K_LSHIFT] and clicking[2]:
         mouse_x, mouse_y = py.mouse.get_pos()
-        kill_cell(game, *screen_to_world(game, mouse_x, mouse_y))
-
-    if keys[py.K_LCTRL] and clicking[2]:
         if not game.box_start:
-            game.box_start = py.mouse.get_pos()
-        game.box_end = py.mouse.get_pos()
-
+            game.box_start = (mouse_x, mouse_y)
+        game.box_end = (mouse_x, mouse_y)
     else:
         game.box_start = None
         game.box_end = None
@@ -81,16 +107,19 @@ def handle_input(game):
                 game.paused = not game.paused
 
             elif event.key == py.K_q:
-                change_speed(game, "down")
+                change_speed(game, "down", keys[py.K_LSHIFT])
 
             elif event.key == py.K_e:
-                change_speed(game, "up")
+                change_speed(game, "up", keys[py.K_LSHIFT])
 
             elif event.key == py.K_r:
                 game.cells = defaultdict(dict)
 
             elif event.key == py.K_g:
                 game.show_grid = not game.show_grid
+
+            elif event.key == py.K_BACKSPACE:
+                kill_cells(game)
 
             elif event.key == py.K_TAB:
                 game.frames_since_update = (1 / FRAME_TIME) / game.updates_per_second
@@ -103,9 +132,9 @@ def handle_input(game):
                 mouse_x, mouse_y = event.pos
                 heal_cell(game, *screen_to_world(game, mouse_x, mouse_y))
 
-            elif event.button == 3:
+            elif event.button == 3 and not keys[py.K_LSHIFT]:
                 mouse_x, mouse_y = event.pos
-                kill_cell(game, *screen_to_world(game, mouse_x, mouse_y))
+                select_cell(game, *screen_to_world(game, mouse_x, mouse_y))
 
         elif event.type == py.MOUSEWHEEL:
             zoom(game, event.y)

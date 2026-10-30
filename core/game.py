@@ -25,6 +25,7 @@ class Game:
         self.box_end = None
         self.show_grid = True
         self.debug = False
+        self.selected_cells = []
         self.cells = defaultdict(dict)
 
         self.camera = Camera(0, 0, 100)
