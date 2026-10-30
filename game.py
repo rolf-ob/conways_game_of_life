@@ -19,10 +19,12 @@ class Game:
         self.paused = False
         self.frames_since_update = 0
         self.updates_per_second = 1
+        self.width = WIDTH
+        self.height = HEIGHT
         self.debug = False
         self.cells = defaultdict(dict)
 
-        self.camera = Camera(0, 0, 1)
+        self.camera = Camera(0, 0, 100)
         self.font = py.font.SysFont("Arial", FONT_SIZE)
         self.text_cache = TextCache(self.font)
         self.frame_limiter = FrameLimiter()

@@ -12,23 +12,28 @@ def heal_cell(game, x, y):
 def kill_cell(game, x, y):
     grid_x = x // CELL_SIZE * CELL_SIZE
     grid_y = y // CELL_SIZE * CELL_SIZE
-    del game.cells[grid_x][grid_y]
+    
+    if grid_x in game.cells and grid_y in game.cells[grid_x]:
+        del game.cells[grid_x][grid_y]
 
 def zoom(game, y):
-    game.camera.zoom = max(1, game.camera.zoom + y)
+    if y > 0:
+        game.camera.zoom = game.camera.zoom + game.camera.zoom / 10 * y
+    else:
+        game.camera.zoom = max(15, game.camera.zoom + game.camera.zoom / 10 / y)
 
 def handle_input(game):
     keys = py.key.get_pressed()
     clicking = py.mouse.get_pressed()
     
     if keys[py.K_w]:
-        game.camera.y -= 10
+        game.camera.y -= 600 / game.camera.zoom
     if keys[py.K_a]:
-        game.camera.x -= 10
+        game.camera.x -= 600 / game.camera.zoom
     if keys[py.K_s]:
-        game.camera.y += 10
+        game.camera.y += 600 / game.camera.zoom
     if keys[py.K_d]:
-        game.camera.x += 10
+        game.camera.x += 600 / game.camera.zoom
 
     if keys[py.K_LSHIFT] and clicking[0]:
         mouse_x, mouse_y = py.mouse.get_pos()
@@ -41,6 +46,9 @@ def handle_input(game):
     for event in py.event.get():
         if event.type == py.QUIT:
             game.running = False
+
+        elif event.type == py.VIDEORESIZE:
+            game.width, game.height = event.size
 
         elif event.type == py.KEYDOWN:
             if event.key == py.K_SPACE:
