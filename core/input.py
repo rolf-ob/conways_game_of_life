@@ -87,11 +87,32 @@ def handle_input(game):
         game.last_click = None
 
     if keys[py.K_LSHIFT] and clicking[2]:
-        mouse_x, mouse_y = py.mouse.get_pos()
+        mouse_x, mouse_y = screen_to_world(game, *py.mouse.get_pos())
         if not game.box_start:
             game.box_start = (mouse_x, mouse_y)
         game.box_end = (mouse_x, mouse_y)
-    else:
+        
+    elif game.box_start:
+        x = min(game.box_start[0], game.box_end[0])
+        y = min(game.box_start[1], game.box_end[1])
+        width = abs(game.box_end[0] - game.box_start[0])
+        height = abs(game.box_end[1] - game.box_start[1])
+        start_x, start_y = [axis // CELL_SIZE * CELL_SIZE for axis in screen_to_world(game, x, y)]
+        end_x, end_y = [(axis + CELL_SIZE) // CELL_SIZE * CELL_SIZE for axis in screen_to_world(game, x + width, y + height)]
+        
+        cells_in_box = [
+            game.cells[row][column]
+            for row in range(start_x, end_x, CELL_SIZE)
+            if row in game.cells
+            for column in range(start_y, end_y, CELL_SIZE)
+            if column in game.cells[row]
+        ]
+
+        for cell in cells_in_box:
+            if not cell.selected:
+                cell.selected = True
+                game.selected_cells.append(cell)
+
         game.box_start = None
         game.box_end = None
 

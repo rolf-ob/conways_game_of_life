@@ -1,5 +1,4 @@
-- Box selection
-- Deleting and moving
+- Moving
 - Buttons
 - Sprites
 - Storing cell structures

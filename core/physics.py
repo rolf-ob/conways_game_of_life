@@ -37,7 +37,7 @@ def update(game):
             dying_cells.extend(condition["dying"])
             healing_cells.extend(condition["healing"])
 
-    for coordinate in dying_cells:
-        del game.cells[coordinate[0]][coordinate[1]]
-    for coordinate in healing_cells:
-        game.cells[coordinate[0]][coordinate[1]] = Cell(coordinate[0], coordinate[1])
+    for axis in dying_cells:
+        del game.cells[axis[0]][axis[1]]
+    for axis in healing_cells:
+        game.cells[axis[0]][axis[1]] = Cell(axis[0], axis[1])

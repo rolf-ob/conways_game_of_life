@@ -4,8 +4,8 @@ from core.spatial import world_to_screen, screen_to_world
 from constants import CELL_SIZE
 
 def draw_grid(game, screen):
-    start_x, start_y = [coordinate // CELL_SIZE * CELL_SIZE for coordinate in screen_to_world(game, 0, 0)]
-    end_x, end_y = [(coordinate + CELL_SIZE) // CELL_SIZE * CELL_SIZE for coordinate in screen_to_world(game, game.width, game.height)]
+    start_x, start_y = [axis // CELL_SIZE * CELL_SIZE for axis in screen_to_world(game, 0, 0)]
+    end_x, end_y = [(axis + CELL_SIZE) // CELL_SIZE * CELL_SIZE for axis in screen_to_world(game, game.width, game.height)]
 
     for column in range(start_x, end_x, CELL_SIZE):
         x = world_to_screen(game, column, 0)[0]
@@ -16,8 +16,8 @@ def draw_grid(game, screen):
         py.draw.line(screen, (40,)*3, (0, y), (game.width, y), max(1, int(1 * game.camera.zoom / 100)))
 
 def draw_cells(game, screen):
-    start_x, start_y = [coordinate // CELL_SIZE * CELL_SIZE for coordinate in screen_to_world(game, 0, 0)]
-    end_x, end_y = [(coordinate + CELL_SIZE) // CELL_SIZE * CELL_SIZE for coordinate in screen_to_world(game, game.width, game.height)]
+    start_x, start_y = [axis // CELL_SIZE * CELL_SIZE for axis in screen_to_world(game, 0, 0)]
+    end_x, end_y = [(axis + CELL_SIZE) // CELL_SIZE * CELL_SIZE for axis in screen_to_world(game, game.width, game.height)]
 
     viewed_cells = {
         row: {
@@ -27,7 +27,7 @@ def draw_cells(game, screen):
         }
         for row in range(start_x, end_x, CELL_SIZE)
         if row in game.cells
-    }            
+    }
 
     for column in viewed_cells.values():
         for cell in column.values():
@@ -63,10 +63,12 @@ def draw(game):
     draw_cells(game, screen)
 
     if game.box_start:
-        x = min(game.box_start[0], game.box_end[0])
-        y = min(game.box_start[1], game.box_end[1])
+        x, y = world_to_screen(game,
+            min(game.box_start[0], game.box_end[0]),
+            min(game.box_start[1], game.box_end[1])
+        )
         width = abs(game.box_end[0] - game.box_start[0])
-        height= abs(game.box_end[1] - game.box_start[1])
+        height = abs(game.box_end[1] - game.box_start[1])
         py.draw.rect(screen, (0, 200, 0), (x, y, width, height), 1)
 
     if game.debug:
