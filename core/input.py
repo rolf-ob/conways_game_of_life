@@ -7,9 +7,18 @@ from entities.cell import Cell
 from constants import CELL_SIZE, FRAME_TIME
 
 def move_cells(game, move_x, move_y):
-    for cell in game.selected_cells.copy():
-        cell.x += move_x * game.camera.zoom // CELL_SIZE * CELL_SIZE
-        cell.y += move_y * game.camera.zoom // CELL_SIZE * CELL_SIZE
+    target_cells = game.selected_cells.copy()
+    deselect_cells(game)
+    
+    for cell in target_cells:
+        del game.cells[cell.x][cell.y]
+
+    for cell in target_cells:
+        x = int(cell.x + move_x / min(1, ((game.camera.zoom / 100) ** 2)) * CELL_SIZE // CELL_SIZE * CELL_SIZE)
+        y = int(cell.y + move_y / min(1, ((game.camera.zoom / 100) ** 2)) * CELL_SIZE // CELL_SIZE * CELL_SIZE)
+        new_cell = Cell(x, y, selected=True)
+        game.cells[x][y] = new_cell
+        game.selected_cells.append(new_cell)
 
 def move_camera(game, keys):
     if keys[py.K_w]:
