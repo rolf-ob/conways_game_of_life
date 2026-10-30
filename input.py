@@ -7,15 +7,12 @@ from constants import CELL_SIZE, FRAME_TIME
 def heal_cell(game, x, y):
     grid_x = x // CELL_SIZE * CELL_SIZE
     grid_y = y // CELL_SIZE * CELL_SIZE
-    game.cells.append(Cell(grid_x, grid_y))
+    game.cells[grid_x][grid_y] = Cell(grid_x, grid_y)
 
 def kill_cell(game, x, y):
     grid_x = x // CELL_SIZE * CELL_SIZE
     grid_y = y // CELL_SIZE * CELL_SIZE
-
-    for cell in game.cells: #! Optimize
-        if cell.x == grid_x and cell.y == grid_y:
-            game.cells.remove(cell)
+    del game.cells[grid_x][grid_y]
 
 def zoom(game, y):
     game.camera.zoom = max(1, game.camera.zoom + y)

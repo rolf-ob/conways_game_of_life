@@ -1,5 +1,6 @@
-- Infinite grid
-- Optimize cell updates
+- Folders
+- Buttons
+- Sprites
 - Custom cell color rules
 - Keybind to place cell at saved location
 - Storing cell structures

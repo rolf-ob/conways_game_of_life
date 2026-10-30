@@ -4,11 +4,12 @@ from spatial import world_to_screen
 from constants import CELL_SIZE
 
 def draw_cells(game, screen):
-    for cell in game.cells:
-        x, y = world_to_screen(game, cell.x, cell.y)
-        width = height = CELL_SIZE * game.camera.zoom
-        py.draw.rect(screen, (255,)*3, (x, y, width, height))
-        py.draw.rect(screen, (0,)*3, (x, y, width, height), 1)
+    for column in game.cells.values():
+        for cell in column.values():
+            x, y = world_to_screen(game, cell.x, cell.y)
+            width = height = CELL_SIZE * game.camera.zoom
+            py.draw.rect(screen, (255,)*3, (x, y, width, height))
+            py.draw.rect(screen, (0,)*3, (x, y, width, height), 1)
 
 def draw_debug(game, screen):
     margin = 40

@@ -1,13 +1,14 @@
 import pygame as py
 
+from collections import defaultdict
+
 from input import handle_input
 from physics import update
 from drawing import draw
 from camera import Camera
-from cell import Cell
 from frame_limiter import FrameLimiter
 from textcache import TextCache
-from constants import WIDTH, HEIGHT, CELL_SIZE, FRAME_TIME, FONT_SIZE
+from constants import WIDTH, HEIGHT, FRAME_TIME, FONT_SIZE
 
 class Game:
     def __init__(self):
@@ -19,7 +20,7 @@ class Game:
         self.frames_since_update = 0
         self.updates_per_second = 1
         self.debug = False
-        self.cells = []
+        self.cells = defaultdict(dict)
 
         self.camera = Camera(0, 0, 1)
         self.font = py.font.SysFont("Arial", FONT_SIZE)
