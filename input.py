@@ -1,21 +1,21 @@
 import pygame as py
 
 from spatial import screen_to_world
+from cell import Cell
 from constants import CELL_SIZE, FRAME_TIME
 
 def heal_cell(game, x, y):
-    grid_x = x // CELL_SIZE
-    grid_y = y // CELL_SIZE
-
-    if 0 <= grid_x < len(game.cells) and 0 <= grid_y < len(game.cells[0]):
-        game.cells[grid_x][grid_y].alive = True
+    grid_x = x // CELL_SIZE * CELL_SIZE
+    grid_y = y // CELL_SIZE * CELL_SIZE
+    game.cells.append(Cell(grid_x, grid_y))
 
 def kill_cell(game, x, y):
-    grid_x = x // CELL_SIZE
-    grid_y = y // CELL_SIZE
+    grid_x = x // CELL_SIZE * CELL_SIZE
+    grid_y = y // CELL_SIZE * CELL_SIZE
 
-    if 0 <= grid_x < len(game.cells) and 0 <= grid_y < len(game.cells[0]):
-        game.cells[grid_x][grid_y].alive = False
+    for cell in game.cells: #! Optimize
+        if cell.x == grid_x and cell.y == grid_y:
+            game.cells.remove(cell)
 
 def zoom(game, y):
     game.camera.zoom = max(1, game.camera.zoom + y)

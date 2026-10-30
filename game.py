@@ -19,14 +19,7 @@ class Game:
         self.frames_since_update = 0
         self.updates_per_second = 1
         self.debug = False
-
-        self.cells = [
-            [
-                Cell(column * CELL_SIZE, row * CELL_SIZE)
-                for row in range(HEIGHT // CELL_SIZE)
-            ]
-            for column in range(WIDTH // CELL_SIZE)
-        ]
+        self.cells = []
 
         self.camera = Camera(0, 0, 1)
         self.font = py.font.SysFont("Arial", FONT_SIZE)
