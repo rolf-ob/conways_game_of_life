@@ -1,6 +1,5 @@
-- Frame limiter busy wait fix
-- Debug screen
-- Camera zoom
+- Infinite grid
+- Optimize cell updates
 - Custom cell color rules
 - Keybind to place cell at saved location
 - Storing cell structures

@@ -8,8 +8,9 @@ def draw_cells(game, screen):
         for cell in column:
             if cell.alive:
                 x, y = world_to_screen(game, cell.x, cell.y)
-                py.draw.rect(screen, (255,)*3, (x, y, CELL_SIZE, CELL_SIZE))
-                py.draw.rect(screen, (0,)*3, (x, y, CELL_SIZE, CELL_SIZE), 1)
+                width = height = CELL_SIZE * game.camera.zoom
+                py.draw.rect(screen, (255,)*3, (x, y, width, height))
+                py.draw.rect(screen, (0,)*3, (x, y, width, height), 1)
 
 def draw_debug(game, screen):
     margin = 40
