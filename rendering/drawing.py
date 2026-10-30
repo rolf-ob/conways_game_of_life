@@ -1,6 +1,6 @@
 import pygame as py
 
-from spatial import world_to_screen, screen_to_world
+from core.spatial import world_to_screen, screen_to_world
 from constants import CELL_SIZE
 
 def draw_cells(game, screen):
