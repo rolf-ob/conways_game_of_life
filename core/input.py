@@ -4,7 +4,7 @@ from collections import defaultdict
 
 from core.spatial import screen_to_world
 from entities.cell import Cell
-from constants import CELL_SIZE, FRAME_TIME
+from constants import CELL_SIZE
 
 def move_cells(game, move_x, move_y):
     target_cells = game.selected_cells.copy()
@@ -163,7 +163,7 @@ def handle_input(game):
             if event.key == py.K_SPACE:
                 game.paused = not game.paused
                 if not game.paused:
-                    game.frames_since_update = 0
+                    game.last_update = 0
                     deselect_cells(game)
 
             elif event.key == py.K_q:
@@ -185,7 +185,8 @@ def handle_input(game):
                 kill_cells(game)
 
             elif event.key == py.K_TAB:
-                game.frames_since_update = (1 / FRAME_TIME) / game.updates_per_second
+                if game.paused:
+                    game.last_update = 0
             
             elif event.key == py.K_F3:
                 game.debug = not game.debug

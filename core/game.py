@@ -1,5 +1,6 @@
 import pygame as py
 
+import time
 from collections import defaultdict
 
 from core.input import handle_input
@@ -8,7 +9,7 @@ from rendering.drawing import draw
 from rendering.textcache import TextCache
 from entities.camera import Camera
 from entities.frame_limiter import FrameLimiter
-from constants import WIDTH, HEIGHT, FRAME_TIME, FONT_SIZE
+from constants import WIDTH, HEIGHT, FPS, FONT_SIZE
 
 class Game:
     def __init__(self):
@@ -17,7 +18,7 @@ class Game:
         self.running = True
 
         self.paused = False
-        self.frames_since_update = 0
+        self.last_update = time.perf_counter()
         self.updates_per_second = 10
         self.width = WIDTH
         self.height = HEIGHT
@@ -37,17 +38,18 @@ class Game:
 
     def run(self):
         while self.running:
-            if not self.paused:
-                self.frames_since_update += 1
+            now = time.perf_counter()
 
             handle_input(self)
-            if round(self.frames_since_update, 12) >= (1 / FRAME_TIME) / self.updates_per_second:
-                self.frames_since_update = 0
+
+            if not self.paused and now - self.last_update >= 1 / self.updates_per_second or self.last_update == 0:
+                self.last_update = now
                 update(self)
+            
             draw(self)
 
             py.display.flip()
-            self.frame_limiter.limit_fps()
+            self.frame_limiter.limit_fps(FPS)
             self.frame_limiter.tick()
 
         py.quit()
