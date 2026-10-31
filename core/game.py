@@ -43,16 +43,21 @@ class Game:
         for file in IMAGES_DIR.glob("*.png"):
             name = file.stem
             image = py.image.load(str(file)).convert_alpha()
+            size = image.get_size()
+            tinted = self.tint_image(image, size, (0, 255, 0))
+
             self.sprites[name] = {
                 "original image": image,
                 "image": image,
-                "original size": image.get_size(),
-                "size": image.get_size()
+                "original size": size,
+                "size": size,
+                "original tinted": tinted,
+                "tinted": tinted
             }
 
-    def tint_image(self, image, color):
-        tinted_image = image["image"].copy()
-        color_surface = py.Surface(image["size"])
+    def tint_image(self, image, size, color):
+        tinted_image = image.copy()
+        color_surface = py.Surface(size)
         color_surface.fill(color)
         tinted_image.blit(color_surface, (0, 0), special_flags=py.BLEND_RGBA_MULT)
         

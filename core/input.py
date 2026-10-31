@@ -22,10 +22,12 @@ def move_cells(game, move_x, move_y):
     
     for cell in target_cells:
         del game.cells[cell.x][cell.y]
+        game.active_cells.add((cell.x, cell.y))
 
     for cell in target_cells:
-        x = int(cell.x + move_x / min(1, ((game.camera.zoom / 100) ** 2)) * CELL_SIZE // CELL_SIZE * CELL_SIZE)
-        y = int(cell.y + move_y / min(1, ((game.camera.zoom / 100) ** 2)) * CELL_SIZE // CELL_SIZE * CELL_SIZE)
+        distance = max(1, 100 // game.camera.zoom) ** 2
+        x = cell.x + move_x * distance * CELL_SIZE
+        y = cell.y + move_y * distance * CELL_SIZE
         new_cell = Cell(x, y, selected=True)
         game.cells[x][y] = new_cell
         game.selected_cells.append(new_cell)
@@ -93,19 +95,17 @@ def change_speed(game, way, shift):
         game.updates_per_second = max(0.1, round(game.updates_per_second + change))
 
 def zoom(game, y):
-    if y > 0:
-        game.camera.zoom = game.camera.zoom + game.camera.zoom / 10 * y
-    else:
-        game.camera.zoom = max(5, game.camera.zoom + game.camera.zoom / 10 / y)
+    game.camera.zoom = min(1084, max(5.21, game.camera.zoom * 1.1 ** y))
 
     game.sprites["cell"]["size"] = [
         size * game.camera.zoom / 100
         for size in game.sprites["cell"]["original size"]
     ]
-    game.sprites["cell"]["image"] = py.transform.scale(
-        game.sprites["cell"]["original image"],
-        game.sprites["cell"]["size"]
-    )
+    for sprite in ("image", "tinted"):
+        game.sprites["cell"][sprite] = py.transform.scale(
+            game.sprites["cell"][f"original {sprite}"],
+            game.sprites["cell"]["size"]
+        )
 
 def handle_input(game):
     keys = py.key.get_pressed()
@@ -182,6 +182,7 @@ def handle_input(game):
                 change_speed(game, "up", keys[py.K_LSHIFT])
 
             elif event.key == py.K_r:
+                deselect_cells(game)
                 game.cells = defaultdict(dict)
 
             elif event.key == py.K_g:
@@ -195,6 +196,7 @@ def handle_input(game):
 
             elif event.key == py.K_TAB:
                 if game.paused:
+                    deselect_cells(game)
                     game.last_update = 0
             
             elif event.key == py.K_F3:
