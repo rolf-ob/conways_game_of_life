@@ -31,14 +31,10 @@ def draw_cells(game, screen):
 
     for column in viewed_cells.values():
         for cell in column.values():
-            color = (0, 200, 0) if cell.selected else (255,)*3
-            x, y = world_to_screen(game, cell.x, cell.y)
-            width = height = CELL_SIZE * game.camera.zoom / 100
-            outline = int(1 * game.camera.zoom / 100) if game.camera.zoom >= 100 else None
-            py.draw.rect(screen, color, (x, y, width, height))
-            if outline:
-                py.draw.rect(screen, (0,)*3, (x, y, width, height), outline)
-
+            position = world_to_screen(game, cell.x, cell.y)
+            screen.blit(game.sprites["cell"]["image"], position)
+            #color = (0, 200, 0) if cell.selected else (255,)*3
+            
 def draw_selection_box(game, screen):
     x, y = world_to_screen(game,
         min(game.box_start[0], game.box_end[0]),

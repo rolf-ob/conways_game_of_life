@@ -9,7 +9,7 @@ from rendering.drawing import draw
 from rendering.textcache import TextCache
 from entities.camera import Camera
 from entities.frame_limiter import FrameLimiter
-from constants import WIDTH, HEIGHT, FPS, FONT_SIZE
+from constants import WIDTH, HEIGHT, FPS, FONT_SIZE, IMAGES_DIR
 
 class Game:
     def __init__(self):
@@ -35,6 +35,19 @@ class Game:
         self.text_cache = TextCache(self.font)
         self.frame_limiter = FrameLimiter()
         self.screen = py.display.set_mode((WIDTH, HEIGHT), py.RESIZABLE)
+
+        self.sprites = {}
+        self.load_assets()
+
+    def load_assets(self):
+        for file in IMAGES_DIR.glob("*.png"):
+            name = file.stem
+            image = py.image.load(str(file)).convert_alpha()
+            self.sprites[name] = {
+                "image": image,
+                "original image": image,
+                "original size": image.get_size()
+            }
 
     def run(self):
         while self.running:

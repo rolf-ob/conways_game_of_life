@@ -4,7 +4,17 @@ from collections import defaultdict
 
 from core.spatial import screen_to_world
 from entities.cell import Cell
-from constants import CELL_SIZE
+from constants import CELL_SIZE, FPS
+
+def move_camera(game, keys):
+    if keys[py.K_w]:
+        game.camera.y -= 600 / game.camera.zoom * FPS / game.frame_limiter.get_fps()
+    if keys[py.K_a]:
+        game.camera.x -= 600 / game.camera.zoom * FPS / game.frame_limiter.get_fps()
+    if keys[py.K_s]:
+        game.camera.y += 600 / game.camera.zoom * FPS / game.frame_limiter.get_fps()
+    if keys[py.K_d]:
+        game.camera.x += 600 / game.camera.zoom * FPS / game.frame_limiter.get_fps()
 
 def move_cells(game, move_x, move_y):
     target_cells = game.selected_cells.copy()
@@ -20,16 +30,6 @@ def move_cells(game, move_x, move_y):
         game.cells[x][y] = new_cell
         game.selected_cells.append(new_cell)
         game.active_cells.add((x, y))
-
-def move_camera(game, keys):
-    if keys[py.K_w]:
-        game.camera.y -= 600 / game.camera.zoom
-    if keys[py.K_a]:
-        game.camera.x -= 600 / game.camera.zoom
-    if keys[py.K_s]:
-        game.camera.y += 600 / game.camera.zoom
-    if keys[py.K_d]:
-        game.camera.x += 600 / game.camera.zoom
 
 def heal_cells(game, mouse_x, mouse_y):    
     if game.last_click and game.last_click != (mouse_x, mouse_y):
@@ -97,6 +97,9 @@ def zoom(game, y):
         game.camera.zoom = game.camera.zoom + game.camera.zoom / 10 * y
     else:
         game.camera.zoom = max(5, game.camera.zoom + game.camera.zoom / 10 / y)
+
+    width, height = (size * game.camera.zoom / 100 for size in game.sprites["cell"]["original size"])
+    game.sprites["cell"]["image"] = py.transform.scale(game.sprites["cell"]["original image"], (width, height))
 
 def handle_input(game):
     keys = py.key.get_pressed()
