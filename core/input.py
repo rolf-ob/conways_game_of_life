@@ -122,8 +122,8 @@ def handle_input(game):
         y = min(game.box_start[1], game.box_end[1])
         width = abs(game.box_end[0] - game.box_start[0])
         height = abs(game.box_end[1] - game.box_start[1])
-        start_x, start_y = [axis // CELL_SIZE * CELL_SIZE for axis in screen_to_world(game, x, y)]
-        end_x, end_y = [(axis + CELL_SIZE) // CELL_SIZE * CELL_SIZE for axis in screen_to_world(game, x + width, y + height)]
+        start_x, start_y = [axis // CELL_SIZE * CELL_SIZE for axis in (x, y)]
+        end_x, end_y = [(axis + CELL_SIZE) // CELL_SIZE * CELL_SIZE for axis in (x + width, y + height)]
         
         cells_in_box = [
             game.cells[row][column]
@@ -162,6 +162,7 @@ def handle_input(game):
             if event.key == py.K_SPACE:
                 game.paused = not game.paused
                 if not game.paused:
+                    game.frames_since_update = 0
                     deselect_cells(game)
 
             elif event.key == py.K_q:

@@ -39,6 +39,17 @@ def draw_cells(game, screen):
             if outline:
                 py.draw.rect(screen, (0,)*3, (x, y, width, height), outline)
 
+def draw_selection_box(game, screen):
+    x, y = world_to_screen(game,
+        min(game.box_start[0], game.box_end[0]),
+        min(game.box_start[1], game.box_end[1])
+    )
+    x2, y2 = world_to_screen(game,
+        max(game.box_start[0], game.box_end[0]),
+        max(game.box_start[1], game.box_end[1])
+    )
+    py.draw.rect(screen, (0, 200, 0), (x, y, x2-x, y2-y), 1)
+
 def draw_debug(game, screen):
     margin = 40
     debug_screen = [
@@ -63,13 +74,7 @@ def draw(game):
     draw_cells(game, screen)
 
     if game.box_start:
-        x, y = world_to_screen(game,
-            min(game.box_start[0], game.box_end[0]),
-            min(game.box_start[1], game.box_end[1])
-        )
-        width = abs(game.box_end[0] - game.box_start[0])
-        height = abs(game.box_end[1] - game.box_start[1])
-        py.draw.rect(screen, (0, 200, 0), (x, y, width, height), 1)
+        draw_selection_box(game, screen)
 
     if game.debug:
         draw_debug(game, screen)

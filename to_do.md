@@ -1,6 +1,5 @@
 Bugs:
-- Box selection scales with camera x,y,zoom
-- Sometimes changing updates/s steps a tick
+- Placing over a selected cell should make the new cell selected
 
 - Buttons
 - Sprites
