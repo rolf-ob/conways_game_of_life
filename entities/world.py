@@ -35,8 +35,8 @@ def heal_cells(game, mouse_x, mouse_y):
     heal_cell(game, mouse_x, mouse_y)
 
 def heal_cell(game, mouse_x, mouse_y):
-    grid_x = mouse_x // CELL_SIZE
-    grid_y = mouse_y // CELL_SIZE
+    grid_x = int(mouse_x // CELL_SIZE)
+    grid_y = int(mouse_y // CELL_SIZE)
 
     if not (grid_x in game.cells and grid_y in game.cells[grid_x]):
         game.cells[grid_x][grid_y] = Cell(grid_x, grid_y)

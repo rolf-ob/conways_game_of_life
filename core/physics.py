@@ -5,8 +5,8 @@ def get_cell_condition(game, cells, x, y, active=False):
         cells["seen"].add((x, y))
 
         neighbor_amount = 0
-        for other_x in range(x, x + 2):
-            for other_y in range(y, y + 2):
+        for other_x in range(x - 1, x + 2):
+            for other_y in range(y - 1, y + 2):
                 if not (other_x == x and other_y == y):
                     if other_x in game.cells and other_y in game.cells[other_x]:
                         neighbor_amount += 1

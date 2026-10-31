@@ -38,8 +38,8 @@ def handle_input(game):
         move_camera(game, keys)
 
     if keys[py.K_LSHIFT] and clicking[0]:
-        mouse_x, mouse_y = py.mouse.get_pos()
-        heal_cells(game, *screen_to_world(game, mouse_x, mouse_y))
+        mouse_x, mouse_y = screen_to_world(game, *py.mouse.get_pos())
+        heal_cells(game, mouse_x, mouse_y)
         game.last_click = mouse_x, mouse_y
     else:
         game.last_click = None
