@@ -98,8 +98,15 @@ def zoom(game, y):
     else:
         game.camera.zoom = max(5, game.camera.zoom + game.camera.zoom / 10 / y)
 
-    width, height = (size * game.camera.zoom / 100 for size in game.sprites["cell"]["original size"])
-    game.sprites["cell"]["image"] = py.transform.scale(game.sprites["cell"]["original image"], (width, height))
+    game.sprites["cell"]["size"] = [
+        size * game.camera.zoom / 100
+        for size in game.sprites["cell"]["original size"]
+    ]
+    print(game.sprites["cell"]["size"])
+    game.sprites["cell"]["image"] = py.transform.scale(
+        game.sprites["cell"]["original image"],
+        game.sprites["cell"]["size"]
+    )
 
 def handle_input(game):
     keys = py.key.get_pressed()

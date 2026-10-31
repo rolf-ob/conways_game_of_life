@@ -31,9 +31,13 @@ def draw_cells(game, screen):
 
     for column in viewed_cells.values():
         for cell in column.values():
+            if cell.selected:
+                image = game.tint_image(game.sprites["cell"], (0, 255, 0, 128))
+            else:
+                image = game.sprites["cell"]["image"]
+            
             position = world_to_screen(game, cell.x, cell.y)
-            screen.blit(game.sprites["cell"]["image"], position)
-            #color = (0, 200, 0) if cell.selected else (255,)*3
+            screen.blit(image, position)
             
 def draw_selection_box(game, screen):
     x, y = world_to_screen(game,
