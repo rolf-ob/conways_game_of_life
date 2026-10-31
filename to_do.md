@@ -1,6 +1,3 @@
-Bugs:
-- Placing over a selected cell should make the new cell selected
-
 - Buttons
 - Sprites
 - Storing cell structures

@@ -50,8 +50,9 @@ def heal_cells(game, mouse_x, mouse_y):
 def heal_cell(game, x, y):
     grid_x = x // CELL_SIZE * CELL_SIZE
     grid_y = y // CELL_SIZE * CELL_SIZE
-    game.cells[grid_x][grid_y] = Cell(grid_x, grid_y)
-    game.active_cells.add((grid_x, grid_y))
+    if not (grid_x in game.cells and grid_y in game.cells[grid_x]):
+        game.cells[grid_x][grid_y] = Cell(grid_x, grid_y)
+        game.active_cells.add((grid_x, grid_y))
 
 def select_cell(game, x, y):
     grid_x = x // CELL_SIZE * CELL_SIZE
