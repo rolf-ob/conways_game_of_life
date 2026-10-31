@@ -7,9 +7,10 @@ from core.input import handle_input
 from core.physics import update
 from rendering.drawing import draw
 from rendering.textcache import TextCache
+from entities.sprite import Sprite
 from entities.camera import Camera
 from entities.frame_limiter import FrameLimiter
-from constants import WIDTH, HEIGHT, FPS, FONT_SIZE, IMAGES_DIR
+from constants import WIDTH, HEIGHT, FPS, FONT_SIZE, SPEEDS, IMAGES_DIR
 
 class Game:
     def __init__(self):
@@ -19,7 +20,8 @@ class Game:
 
         self.paused = False
         self.last_update = time.perf_counter()
-        self.updates_per_second = 10
+        self.step_requested = False
+        self.speed_index = 9
         self.width = WIDTH
         self.height = HEIGHT
         self.box_start = None
@@ -41,27 +43,7 @@ class Game:
 
     def load_assets(self):
         for file in IMAGES_DIR.glob("*.png"):
-            name = file.stem
-            image = py.image.load(str(file)).convert_alpha()
-            size = image.get_size()
-            tinted = self.tint_image(image, size, (0, 255, 0))
-
-            self.sprites[name] = {
-                "original image": image,
-                "image": image,
-                "original size": size,
-                "size": size,
-                "original tinted": tinted,
-                "tinted": tinted
-            }
-
-    def tint_image(self, image, size, color):
-        tinted_image = image.copy()
-        color_surface = py.Surface(size)
-        color_surface.fill(color)
-        tinted_image.blit(color_surface, (0, 0), special_flags=py.BLEND_RGBA_MULT)
-        
-        return tinted_image
+            self.sprites[file.stem] = Sprite(py.image.load(str(file)).convert_alpha())
 
     def run(self):
         while self.running:
@@ -69,8 +51,9 @@ class Game:
 
             handle_input(self)
 
-            if not self.paused and now - self.last_update >= 1 / self.updates_per_second or self.last_update == 0:
+            if not self.paused and now - self.last_update >= 1 / SPEEDS[self.speed_index] or self.step_requested:
                 self.last_update = now
+                self.step_requested = False
                 update(self)
             
             draw(self)

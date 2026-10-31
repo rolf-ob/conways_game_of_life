@@ -1,8 +1,10 @@
 import time
 
+from collections import deque
+
 class FrameLimiter:
     def __init__(self):
-        self.frame_times = []
+        self.frame_times = deque()
         self.next_frame = time.perf_counter()
 
     def limit_fps(self, target_fps):
@@ -20,9 +22,8 @@ class FrameLimiter:
         now = time.perf_counter()
         self.frame_times.append(now)
 
-        for frame in self.frame_times.copy():
-            if now - frame >= 1:
-                self.frame_times.remove(frame)
+        while now - self.frame_times[0] >= 1:
+            self.frame_times.popleft()
 
     def get_fps(self):
         return len(self.frame_times)

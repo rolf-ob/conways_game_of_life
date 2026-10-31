@@ -1,7 +1,7 @@
 import pygame as py
 
 from core.spatial import world_to_screen, screen_to_world
-from constants import CELL_SIZE, FONT_SIZE
+from constants import CELL_SIZE, FONT_SIZE, SPEEDS
 
 def draw_grid(game, screen):
     start_x, start_y = [axis // CELL_SIZE * CELL_SIZE for axis in screen_to_world(game, 0, 0)]
@@ -16,31 +16,32 @@ def draw_grid(game, screen):
         py.draw.line(screen, (40,)*3, (0, y), (game.width, y), max(1, int(1 * game.camera.zoom / 100)))
 
 def draw_cells(game, screen):
-    start_x, start_y = [axis // CELL_SIZE * CELL_SIZE for axis in screen_to_world(game, 0, 0)]
-    end_x, end_y = [(axis + CELL_SIZE) // CELL_SIZE * CELL_SIZE for axis in screen_to_world(game, game.width, game.height)]
-    squares_within_view = (end_x - start_x) / 20 * ((end_y - start_y) / 20)
+    start_x, start_y = [axis // CELL_SIZE for axis in screen_to_world(game, 0, 0)]
+    end_x, end_y = [(axis + CELL_SIZE) // CELL_SIZE for axis in screen_to_world(game, game.width, game.height)]
+    squares_within_view = (end_x - start_x) * (end_y - start_y)
     game.total_cells = sum(len(column.values()) for column in game.cells.values())
 
+    print(start_x, end_x, start_y, end_y)
     if squares_within_view <= game.total_cells:
         viewed_cells = [
             (
-                game.sprites["cell"]["tinted"] if game.cells[column][row].selected else
-                game.sprites["cell"]["image"],
-                world_to_screen(game, column, row)
+                game.sprites["cell"].tinted if game.cells[column][row].selected else
+                game.sprites["cell"].image,
+                world_to_screen(game, column * CELL_SIZE, row * CELL_SIZE)
             )
             
-            for column in range(start_x, end_x, CELL_SIZE)
+            for column in range(start_x, end_x)
             if column in game.cells
 
-            for row in range(start_y, end_y, CELL_SIZE)
+            for row in range(start_y, end_y)
             if row in game.cells[column]
         ]
     else:
         viewed_cells = [
             (
-                game.sprites["cell"]["tinted"] if game.cells[column][row].selected else
-                game.sprites["cell"]["image"],
-                world_to_screen(game, column, row)
+                game.sprites["cell"].tinted if game.cells[column][row].selected else
+                game.sprites["cell"].image,
+                world_to_screen(game, column * CELL_SIZE, row * CELL_SIZE)
             )
 
             for column in game.cells
@@ -67,7 +68,7 @@ def draw_debug(game, screen):
     debug_screen = [
         f"FPS: {game.frame_limiter.get_fps()}",
         f"Paused: {game.paused}",
-        f"Updates per second: {game.updates_per_second}",
+        f"Updates per second: {SPEEDS[game.speed_index]}",
         f"Checks per update: {len(game.active_cells)}",
         f"Live cells: {game.total_cells}",
         f"Position: {int(game.camera.x)} / {int(game.camera.y)}",

@@ -1,13 +1,12 @@
 from entities.cell import Cell
-from constants import CELL_SIZE
 
 def get_cell_condition(game, cells, x, y, active=False):
     if (x, y) not in cells["seen"]:
         cells["seen"].add((x, y))
 
         neighbor_amount = 0
-        for other_x in range(x - CELL_SIZE, x + CELL_SIZE*2, CELL_SIZE):
-            for other_y in range(y - CELL_SIZE, y + CELL_SIZE*2, CELL_SIZE):
+        for other_x in range(x, x + 2):
+            for other_y in range(y, y + 2):
                 if not (other_x == x and other_y == y):
                     if other_x in game.cells and other_y in game.cells[other_x]:
                         neighbor_amount += 1

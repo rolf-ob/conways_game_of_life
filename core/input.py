@@ -2,9 +2,9 @@ import pygame as py
 
 from collections import defaultdict
 
+from entities.world import move_cells, heal_cells, heal_cell, select_cell, deselect_cells, kill_cells
 from core.spatial import screen_to_world
-from entities.cell import Cell
-from constants import CELL_SIZE, FPS
+from constants import CELL_SIZE, FPS, SPEEDS
 
 def move_camera(game, keys):
     if keys[py.K_w]:
@@ -16,96 +16,19 @@ def move_camera(game, keys):
     if keys[py.K_d]:
         game.camera.x += 600 / game.camera.zoom * FPS / game.frame_limiter.get_fps()
 
-def move_cells(game, move_x, move_y):
-    target_cells = game.selected_cells.copy()
-    deselect_cells(game)
-    
-    for cell in target_cells:
-        del game.cells[cell.x][cell.y]
-        game.active_cells.add((cell.x, cell.y))
-
-    for cell in target_cells:
-        distance = max(1, 100 // game.camera.zoom) ** 2
-        x = cell.x + move_x * distance * CELL_SIZE
-        y = cell.y + move_y * distance * CELL_SIZE
-        new_cell = Cell(x, y, selected=True)
-        game.cells[x][y] = new_cell
-        game.selected_cells.append(new_cell)
-        game.active_cells.add((x, y))
-
-def heal_cells(game, mouse_x, mouse_y):    
-    if game.last_click and game.last_click != (mouse_x, mouse_y):
-        dx = (mouse_x - game.last_click[0])
-        dy = (mouse_y - game.last_click[1])
-        step = abs(dx) if abs(dx) >= abs(dy) else abs(dy)
-        dx /= step
-        dy /= step
-        x = game.last_click[0]
-        y = game.last_click[1]
-
-        for _ in range(step):
-            heal_cell(game, int(x // CELL_SIZE * CELL_SIZE), int(y // CELL_SIZE * CELL_SIZE))
-            x += dx
-            y += dy
-    heal_cell(game, mouse_x, mouse_y)
-
-def heal_cell(game, x, y):
-    grid_x = x // CELL_SIZE * CELL_SIZE
-    grid_y = y // CELL_SIZE * CELL_SIZE
-    if not (grid_x in game.cells and grid_y in game.cells[grid_x]):
-        game.cells[grid_x][grid_y] = Cell(grid_x, grid_y)
-        game.active_cells.add((grid_x, grid_y))
-
-def select_cell(game, x, y):
-    grid_x = x // CELL_SIZE * CELL_SIZE
-    grid_y = y // CELL_SIZE * CELL_SIZE
-
-    if grid_x in game.cells and grid_y in game.cells[grid_x]:
-        cell = game.cells[grid_x][grid_y]
-
-        cell.selected = not cell.selected
-        if cell.selected:
-            game.selected_cells.append(cell)
-        else:
-            game.selected_cells.remove(cell)
-
-def deselect_cells(game):
-    for cell in game.selected_cells:
-        cell.selected = False
-    game.selected_cells = []
-
-def kill_cells(game):
-    for cell in game.selected_cells.copy():
-        del game.cells[cell.x][cell.y]
-        game.selected_cells.remove(cell)
-        game.active_cells.add((cell.x, cell.y))
-
-def change_speed(game, way, shift):
-    micro = True if (
-        way == "down" and game.updates_per_second <= 1 or
-        way == "up" and game.updates_per_second < 1
-        ) else False
-    change = -1 if way == "down" else 1
-    if shift and not (micro and way == "down"):
-        change *= 10
-
-    if micro:
-        game.updates_per_second = max(0.1, round(game.updates_per_second + change/10, 1))
-    else:
-        game.updates_per_second = max(0.1, round(game.updates_per_second + change))
-
 def zoom(game, y):
     game.camera.zoom = min(1084, max(5.21, game.camera.zoom * 1.1 ** y))
 
-    game.sprites["cell"]["size"] = [
+    game.sprites["cell"].size = [
         size * game.camera.zoom / 100
-        for size in game.sprites["cell"]["original size"]
+        for size in game.sprites["cell"].original_size
     ]
     for sprite in ("image", "tinted"):
-        game.sprites["cell"][sprite] = py.transform.scale(
-            game.sprites["cell"][f"original {sprite}"],
-            game.sprites["cell"]["size"]
-        )
+        setattr(game.sprites["cell"], sprite,
+            py.transform.scale(
+                getattr(game.sprites["cell"], f"original_{sprite}"),
+                game.sprites["cell"].size
+            ))
 
 def handle_input(game):
     keys = py.key.get_pressed()
@@ -115,8 +38,8 @@ def handle_input(game):
         move_camera(game, keys)
 
     if keys[py.K_LSHIFT] and clicking[0]:
-        mouse_x, mouse_y = [axis // CELL_SIZE * CELL_SIZE for axis in screen_to_world(game, *py.mouse.get_pos())]
-        heal_cells(game, mouse_x, mouse_y)
+        mouse_x, mouse_y = py.mouse.get_pos()
+        heal_cells(game, *screen_to_world(game, mouse_x, mouse_y))
         game.last_click = mouse_x, mouse_y
     else:
         game.last_click = None
@@ -132,14 +55,14 @@ def handle_input(game):
         y = min(game.box_start[1], game.box_end[1])
         width = abs(game.box_end[0] - game.box_start[0])
         height = abs(game.box_end[1] - game.box_start[1])
-        start_x, start_y = [axis // CELL_SIZE * CELL_SIZE for axis in (x, y)]
-        end_x, end_y = [(axis + CELL_SIZE) // CELL_SIZE * CELL_SIZE for axis in (x + width, y + height)]
+        start_x, start_y = [axis // CELL_SIZE for axis in (x, y)]
+        end_x, end_y = [(axis + CELL_SIZE) // CELL_SIZE for axis in (x + width, y + height)]
         
         cells_in_box = [
             game.cells[row][column]
-            for row in range(start_x, end_x, CELL_SIZE)
+            for row in range(start_x, end_x)
             if row in game.cells
-            for column in range(start_y, end_y, CELL_SIZE)
+            for column in range(start_y, end_y)
             if column in game.cells[row]
         ]
 
@@ -176,10 +99,10 @@ def handle_input(game):
                     deselect_cells(game)
 
             elif event.key == py.K_q:
-                change_speed(game, "down", keys[py.K_LSHIFT])
+                game.speed_index = max(0, game.speed_index - 1)
 
             elif event.key == py.K_e:
-                change_speed(game, "up", keys[py.K_LSHIFT])
+                game.speed_index = min(len(SPEEDS)-1, game.speed_index + 1)
 
             elif event.key == py.K_r:
                 deselect_cells(game)
@@ -197,7 +120,7 @@ def handle_input(game):
             elif event.key == py.K_TAB:
                 if game.paused:
                     deselect_cells(game)
-                    game.last_update = 0
+                    game.step_requested = True
             
             elif event.key == py.K_F3:
                 game.debug = not game.debug
