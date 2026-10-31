@@ -102,7 +102,6 @@ def zoom(game, y):
         size * game.camera.zoom / 100
         for size in game.sprites["cell"]["original size"]
     ]
-    print(game.sprites["cell"]["size"])
     game.sprites["cell"]["image"] = py.transform.scale(
         game.sprites["cell"]["original image"],
         game.sprites["cell"]["size"]
