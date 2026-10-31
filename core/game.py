@@ -25,6 +25,7 @@ class Game:
         self.box_end = None
         self.show_grid = True
         self.debug = False
+        self.active_cells = set()
         self.selected_cells = []
         self.cells = defaultdict(dict)
 

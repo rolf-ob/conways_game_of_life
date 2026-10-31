@@ -19,6 +19,7 @@ def move_cells(game, move_x, move_y):
         new_cell = Cell(x, y, selected=True)
         game.cells[x][y] = new_cell
         game.selected_cells.append(new_cell)
+        game.active_cells.add((x, y))
 
 def move_camera(game, keys):
     if keys[py.K_w]:
@@ -50,6 +51,7 @@ def heal_cell(game, x, y):
     grid_x = x // CELL_SIZE * CELL_SIZE
     grid_y = y // CELL_SIZE * CELL_SIZE
     game.cells[grid_x][grid_y] = Cell(grid_x, grid_y)
+    game.active_cells.add((grid_x, grid_y))
 
 def select_cell(game, x, y):
     grid_x = x // CELL_SIZE * CELL_SIZE
@@ -73,6 +75,7 @@ def kill_cells(game):
     for cell in game.selected_cells.copy():
         del game.cells[cell.x][cell.y]
         game.selected_cells.remove(cell)
+        game.active_cells.add((cell.x, cell.y))
 
 def change_speed(game, way, shift):
     micro = True if (

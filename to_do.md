@@ -1,5 +1,6 @@
 Bugs:
 - Box selection scales with camera x,y,zoom
+- Sometimes changing updates/s steps a tick
 
 - Buttons
 - Sprites
