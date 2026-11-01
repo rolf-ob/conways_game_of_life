@@ -21,7 +21,6 @@ def draw_cells(game, screen):
     squares_within_view = (end_x - start_x) * (end_y - start_y)
     game.total_cells = sum(len(column.values()) for column in game.cells.values())
 
-    print(start_x, end_x, start_y, end_y)
     if squares_within_view <= game.total_cells:
         viewed_cells = [
             (
@@ -51,7 +50,7 @@ def draw_cells(game, screen):
             if row in range(start_y, end_y)
         ]
 
-        screen.blits(viewed_cells)
+    screen.blits(viewed_cells)
             
 def draw_selection_box(game, screen):
     x, y = world_to_screen(game,

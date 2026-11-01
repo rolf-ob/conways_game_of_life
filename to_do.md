@@ -29,7 +29,6 @@ Bottom left while selected:
 - Move down
 - Move right
 
-- Left clicking cells kills them
 - Fix tiny lines between cells
 - Storing cell structures
 - Saving worlds/structures to file

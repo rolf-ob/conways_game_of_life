@@ -2,7 +2,7 @@ import pygame as py
 
 from collections import defaultdict
 
-from entities.world import move_cells, heal_cells, heal_cell, select_cell, deselect_cells, kill_cells
+from entities.world import move_cells, heal_cells, toggle_cell, select_cell, deselect_cells, kill_cells
 from core.spatial import screen_to_world
 from constants import CELL_SIZE, FPS, SPEEDS
 
@@ -127,13 +127,12 @@ def handle_input(game):
 
         elif event.type == py.MOUSEBUTTONDOWN:
             if event.button == 1:
-                mouse_x, mouse_y = event.pos
-                heal_cell(game, *screen_to_world(game, mouse_x, mouse_y))
+                if not keys[py.K_LSHIFT]:
+                    toggle_cell(game, *screen_to_world(game, *event.pos), True)
 
             elif event.button == 3:
                 if game.paused and not keys[py.K_LSHIFT]:
-                    mouse_x, mouse_y = event.pos
-                    select_cell(game, *screen_to_world(game, mouse_x, mouse_y))
+                    select_cell(game, *screen_to_world(game, *event.pos))
 
         elif event.type == py.MOUSEWHEEL:
             zoom(game, event.y)

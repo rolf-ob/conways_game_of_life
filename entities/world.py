@@ -29,22 +29,28 @@ def heal_cells(game, mouse_x, mouse_y):
         y = game.last_click[1]
 
         for _ in range(step):
-            heal_cell(game, x, y)
+            toggle_cell(game, x, y)
             x += dx
             y += dy
-    heal_cell(game, mouse_x, mouse_y)
+    toggle_cell(game, mouse_x, mouse_y)
 
-def heal_cell(game, mouse_x, mouse_y):
+def toggle_cell(game, mouse_x, mouse_y, kill=False):
     grid_x = int(mouse_x // CELL_SIZE)
     grid_y = int(mouse_y // CELL_SIZE)
 
     if not (grid_x in game.cells and grid_y in game.cells[grid_x]):
         game.cells[grid_x][grid_y] = Cell(grid_x, grid_y)
         game.active_cells.add((grid_x, grid_y))
+    elif kill:
+        del game.cells[grid_x][grid_y]
+        game.active_cells.remove((grid_x, grid_y))
 
-def select_cell(game, x, y):
-    if x in game.cells and y in game.cells[x]:
-        cell = game.cells[x][y]
+def select_cell(game, mouse_x, mouse_y):
+    grid_x = int(mouse_x // CELL_SIZE)
+    grid_y = int(mouse_y // CELL_SIZE)
+
+    if grid_x in game.cells and grid_y in game.cells[grid_x]:
+        cell = game.cells[grid_x][grid_y]
 
         cell.selected = not cell.selected
         if cell.selected:
