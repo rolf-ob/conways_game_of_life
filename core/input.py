@@ -2,7 +2,7 @@ import pygame as py
 
 from collections import defaultdict
 
-from entities.world import move_cells, heal_cells, toggle_cell, select_cell, deselect_cells, kill_cells
+from core.world import move_cells, heal_cells, toggle_cell, select_cell, deselect_cells, kill_cells
 from core.spatial import screen_to_world
 from constants import CELL_SIZE, FPS, SPEEDS
 

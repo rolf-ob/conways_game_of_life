@@ -24,6 +24,7 @@ class Game:
         self.speed_index = 9
         self.width = WIDTH
         self.height = HEIGHT
+        self.last_click = None
         self.box_start = None
         self.box_end = None
         self.show_grid = True
