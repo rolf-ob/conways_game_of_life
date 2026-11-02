@@ -71,7 +71,7 @@ def draw_debug(game, screen):
         f"Checks per update: {len(game.active_cells)}",
         f"Live cells: {game.total_cells}",
         f"Position: {int(game.camera.x)} / {int(game.camera.y)}",
-        f"Camera zoom: {min(10, int(game.camera.zoom) / 100)}",
+        f"Camera zoom: {round(game.camera.zoom / 100, 4)}",
     ]
     for i, line in enumerate(debug_screen):
         screen.blit(game.text_cache.get_surface(line, "screen", (255,)*3), (FONT_SIZE, FONT_SIZE + i*FONT_SIZE))

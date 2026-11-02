@@ -43,10 +43,9 @@ def toggle_cell(game, mouse_x, mouse_y, kill=False):
         game.active_cells.add((grid_x, grid_y))
     elif kill:
         del game.cells[grid_x][grid_y]
+        game.active_cells.add((grid_x, grid_y))
         if (grid_x, grid_y) in game.selected_cells:
             game.selected_cells.remove((grid_x, grid_y))
-        if (grid_x, grid_y) in game.active_cells:
-            game.active_cells.remove((grid_x, grid_y))
 
 def select_cell(game, mouse_x, mouse_y):
     grid_x = int(mouse_x // CELL_SIZE)

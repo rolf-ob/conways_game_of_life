@@ -10,7 +10,7 @@ from rendering.textcache import TextCache
 from entities.sprite import Sprite
 from entities.camera import Camera
 from entities.frame_limiter import FrameLimiter
-from constants import WIDTH, HEIGHT, FPS, FONT_SIZE, SPEEDS, IMAGES_DIR
+from constants import WIDTH, HEIGHT, FPS, FONT_SIZE, ZOOMS, SPEEDS, IMAGES_DIR
 
 class Game:
     def __init__(self):
@@ -21,7 +21,8 @@ class Game:
         self.paused = False
         self.last_update = time.perf_counter()
         self.step_requested = False
-        self.speed_index = 9
+        self.zoom_index = ZOOMS.index(100)
+        self.speed_index = SPEEDS.index(8)
         self.width = WIDTH
         self.height = HEIGHT
         self.last_click = None
@@ -33,7 +34,7 @@ class Game:
         self.selected_cells = []
         self.cells = defaultdict(dict)
 
-        self.camera = Camera(0, 0, 100)
+        self.camera = Camera(0, 0, ZOOMS[self.zoom_index])
         self.font = py.font.SysFont("Arial", FONT_SIZE)
         self.text_cache = TextCache(self.font)
         self.frame_limiter = FrameLimiter()

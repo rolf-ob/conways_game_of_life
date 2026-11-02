@@ -4,7 +4,7 @@ from collections import defaultdict
 
 from core.world import move_cells, heal_cells, toggle_cell, select_cell, deselect_cells, kill_cells
 from core.spatial import screen_to_world
-from constants import CELL_SIZE, FPS, SPEEDS
+from constants import CELL_SIZE, FPS, ZOOMS, SPEEDS
 
 def move_camera(game, keys):
     if keys[py.K_w]:
@@ -17,10 +17,11 @@ def move_camera(game, keys):
         game.camera.x += 600 / game.camera.zoom * FPS / game.frame_limiter.get_fps()
 
 def zoom(game, y):
-    game.camera.zoom = min(1084, max(5.21, game.camera.zoom * 1.1 ** y))
+    game.zoom_index = max(0, min(len(ZOOMS)-1, game.zoom_index + y))
+    game.camera.zoom = ZOOMS[game.zoom_index]
 
     game.sprites["cell"].size = [
-        size * game.camera.zoom / 100
+        max(1, size * game.camera.zoom / 100)
         for size in game.sprites["cell"].original_size
     ]
     for sprite in ("image", "tinted"):
