@@ -1,5 +1,7 @@
 import pygame as py
 
+from itertools import product
+
 from core.world import move_cells, heal_cells, toggle_cell, select_cell, kill_cells
 from core.spatial import screen_to_world
 from constants import CELL_SIZE, FPS, ZOOMS, SPEEDS
@@ -46,13 +48,7 @@ def handle_input(game):
         start_x, start_y = [axis // CELL_SIZE for axis in (x, y)]
         end_x, end_y = [(axis + CELL_SIZE) // CELL_SIZE for axis in (x + width, y + height)]
         
-        cells_in_box = [ #!
-            game.cells[row][column]
-            for row in range(start_x, end_x)
-            if row in game.cells
-            for column in range(start_y, end_y)
-            if column in game.cells[row]
-        ]
+        cells_in_box = game.cells.intersection(product(range(start_x, end_x), range(start_y, end_y)))
 
         for cell in cells_in_box:
             if cell not in game.selected_cells:

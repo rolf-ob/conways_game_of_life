@@ -14,10 +14,10 @@ def get_cell_condition(game, cells, cell, active=False):
 
         if cell in game.cells:
             if neighbor_amount < 2 or neighbor_amount > 3:
-                cells["dying"].add(cell)
+                cells["dying"].append(cell)
 
         elif neighbor_amount == 3:
-            cells["healing"].add(cell)
+            cells["healing"].append(cell)
 
 def update(game):
     cells = {

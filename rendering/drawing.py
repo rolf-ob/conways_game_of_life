@@ -1,8 +1,10 @@
 import pygame as py
 
+from itertools import product
+
 from core.spatial import world_to_screen, screen_to_world
 from constants import CELL_SIZE, FONT_SIZE, SPEEDS
-
+ 
 def draw_grid(game, screen):
     start_x, start_y = [axis // CELL_SIZE * CELL_SIZE for axis in screen_to_world(game, 0, 0)]
     end_x, end_y = [(axis + CELL_SIZE) // CELL_SIZE * CELL_SIZE for axis in screen_to_world(game, game.width, game.height)]
@@ -18,25 +20,28 @@ def draw_grid(game, screen):
 def draw_cells(game, screen):
     start_x, start_y = [axis // CELL_SIZE for axis in screen_to_world(game, 0, 0)]
     end_x, end_y = [(axis + CELL_SIZE) // CELL_SIZE for axis in screen_to_world(game, game.width, game.height)]
-    squares_within_view = (end_x - start_x) * (end_y - start_y)
-    game.total_cells = sum(len(column.values()) for column in game.cells.values())
 
-    if squares_within_view <= game.total_cells: #!
-        viewed_cells = [
-            (world_to_screen(game, column * CELL_SIZE, row * CELL_SIZE))
-            for something in something
-        ]
-    else:
-        viewed_cells = [
-            (world_to_screen(game, column * CELL_SIZE, row * CELL_SIZE))
-            for something in something
-        ]
+    viewed_cells = (
+        game.cells.intersection(product(range(start_x, end_x), range(start_y, end_y)))
+        if (end_x - start_x) * (end_y - start_y) <= len(game.cells) else
+        {cell for cell in game.cells if start_x <= cell[0] < end_x and start_y <= cell[1] < end_y}
+    )
 
-    outline = game.camera.zoom / 100
+    x_center = game.width / 2
+    y_center = game.height / 2
+    camera_x_offset = -game.camera.x - x_center
+    camera_y_offset = -game.camera.y - y_center
+    zoom = game.camera.zoom / 100
+    dimensions = (max(1, CELL_SIZE * zoom),) * 2
+
     for cell in viewed_cells:
-        py.draw.rect(screen, (255,)*3, (cell[0], cell[1]))
-        if cell in game.selected_cells:
-            py.draw.rect(screen, (0,)*3, (cell[0], cell[1]), outline)
+        color = (0, 255, 0) if cell in game.selected_cells else (255,)*3
+        x = (cell[0] * CELL_SIZE + camera_x_offset) * zoom + x_center
+        y = (cell[1] * CELL_SIZE + camera_y_offset) * zoom + y_center
+
+        py.draw.rect(screen, color, (x, y, *dimensions))
+        if zoom >= 1:
+            py.draw.rect(screen, (0,)*3, (x, y, *dimensions), int(zoom))
             
 def draw_selection_box(game, screen):
     x, y = world_to_screen(game,
@@ -55,7 +60,7 @@ def draw_debug(game, screen):
         f"Paused: {game.paused}",
         f"Updates per second: {SPEEDS[game.speed_index]}",
         f"Checks per update: {len(game.active_cells)}",
-        f"Live cells: {game.total_cells}",
+        f"Live cells: {len(game.cells)}",
         f"Position: {int(game.camera.x)} / {int(game.camera.y)}",
         f"Camera zoom: {round(game.camera.zoom / 100, 4)}",
     ]

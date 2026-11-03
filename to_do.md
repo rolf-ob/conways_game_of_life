@@ -29,7 +29,6 @@ Bottom left while selected:
 - Move down
 - Move right
 
-- Fix tiny lines between cells
 - Storing cell structures
 - Saving worlds/structures to file
 - Keybind to place/remove structure at saved location
