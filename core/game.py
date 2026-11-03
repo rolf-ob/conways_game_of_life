@@ -35,7 +35,7 @@ class Game:
         self.debug = False
 
         self.cells = set()
-        self.active_cells = set()
+        self.changed_cells = set()
         self.selected_cells = set()
 
         self.camera = Camera(0, 0, ZOOMS[self.zoom_index])

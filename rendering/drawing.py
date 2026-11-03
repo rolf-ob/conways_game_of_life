@@ -59,7 +59,7 @@ def draw_debug(game, screen):
         f"FPS: {game.frame_limiter.get_fps()}",
         f"Paused: {game.paused}",
         f"Updates per second: {SPEEDS[game.speed_index]}",
-        f"Checks per update: {len(game.active_cells)}",
+        f"Checks per update: {len(game.changed_cells)}",
         f"Live cells: {len(game.cells)}",
         f"Position: {int(game.camera.x)} / {int(game.camera.y)}",
         f"Camera zoom: {round(game.camera.zoom / 100, 4)}",

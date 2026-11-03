@@ -1,40 +1,37 @@
-def get_cell_condition(game, cells, cell, active=False):
-    if cell not in cells["seen"]:
-        cells["seen"].add(cell)
+def get_cell_condition(game, cells, cell):
+    neighbor_amount = 0
+    for other_x in range(cell[0] - 1, cell[0] + 2):
+        for other_y in range(cell[1] - 1, cell[1] + 2):
+            if not (other_x == cell[0] and other_y == cell[1]):
+                if (other_x, other_y) in game.cells:
+                    neighbor_amount += 1
 
-        neighbor_amount = 0
-        for other_x in range(cell[0] - 1, cell[0] + 2):
-            for other_y in range(cell[1] - 1, cell[1] + 2):
-                if not (other_x == cell[0] and other_y == cell[1]):
-                    if (other_x, other_y) in game.cells:
-                        neighbor_amount += 1
+    if cell in game.cells:
+        if neighbor_amount < 2 or neighbor_amount > 3:
+            cells["dying"].append(cell)
 
-                    if active and (other_x, other_y) not in game.active_cells:
-                        get_cell_condition(game, cells, (other_x, other_y))
-
-        if cell in game.cells:
-            if neighbor_amount < 2 or neighbor_amount > 3:
-                cells["dying"].append(cell)
-
-        elif neighbor_amount == 3:
-            cells["healing"].append(cell)
+    elif neighbor_amount == 3:
+        cells["healing"].append(cell)
 
 def update(game):
     cells = {
         "dying": [],
         "healing": [],
-        "seen": set()
     }
 
-    active_alive = {(x, y) for y in (-1, 0, 1) for x in (-1, 0, 1)}
-    for cell in game.active_cells:
-        get_cell_condition(game, cells, cell, True)
-    game.active_cells.clear()
+    cell_checks = {
+        (x+x2, y+y2) for x2 in (-1, 0, 1) for y2 in (-1, 0, 1)
+        for (x, y) in game.changed_cells
+    }
+
+    for cell in cell_checks:
+        get_cell_condition(game, cells, cell)
+    game.changed_cells.clear()
 
     for cell in cells["dying"]:
         game.cells.remove(cell)
-        game.active_cells.add(cell)
+        game.changed_cells.add(cell)
 
     for cell in cells["healing"]:
         game.cells.add(cell)
-        game.active_cells.add(cell)
+        game.changed_cells.add(cell)

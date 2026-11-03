@@ -6,7 +6,7 @@ def move_cells(game, move_x, move_y):
     
     for cell in target_cells:
         game.cells.remove(cell)
-        game.active_cells.add(cell)
+        game.changed_cells.add(cell)
 
     for cell in target_cells:
         distance = max(1, 100 // game.camera.zoom) ** 2
@@ -14,7 +14,7 @@ def move_cells(game, move_x, move_y):
         y = cell[1] + move_y * distance
         game.cells.add((x, y))
         game.selected_cells.add((x, y))
-        game.active_cells.add((x, y))
+        game.changed_cells.add((x, y))
 
 def heal_cells(game, world_x, world_y):  
     if game.last_click and game.last_click != (world_x, world_y):
@@ -46,7 +46,7 @@ def toggle_cell(game, world_x, world_y, kill=False):
         if cell in game.selected_cells:
             game.selected_cells.remove(cell)
 
-    game.active_cells.add(cell)
+    game.changed_cells.add(cell)
 
 def select_cell(game, world_x, world_y):
     cell = (
@@ -63,5 +63,5 @@ def select_cell(game, world_x, world_y):
 def kill_cells(game):
     for cell in game.selected_cells:
         game.cells.remove(cell)
-        game.active_cells.add(cell)
+        game.changed_cells.add(cell)
     game.selected_cells.clear()
