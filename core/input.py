@@ -29,27 +29,31 @@ def handle_input(game):
         move_camera(game, keys)
 
     if keys[py.K_LSHIFT] and clicking[0]:
-        world_x, world_y = screen_to_world(game, *py.mouse.get_pos())
-        heal_cells(game, world_x, world_y)
-        game.last_click = world_x, world_y
+        x, y = [axis // CELL_SIZE for axis in screen_to_world(game, *py.mouse.get_pos())]
+        heal_cells(game, x, y)
+        game.last_click = x, y
     else:
         game.last_click = None
 
     if game.paused and keys[py.K_LSHIFT] and clicking[2]:
         world_x, world_y = screen_to_world(game, *py.mouse.get_pos())
-        if not game.box_start:
+        if game.box_start is None:
             game.box_start = (world_x, world_y)
         game.box_end = (world_x, world_y)
         
-    elif game.box_start:
+    elif game.box_start is not None:
         x = min(game.box_start[0], game.box_end[0])
         y = min(game.box_start[1], game.box_end[1])
         width = abs(game.box_end[0] - game.box_start[0])
         height = abs(game.box_end[1] - game.box_start[1])
         start_x, start_y = [axis // CELL_SIZE for axis in (x, y)]
         end_x, end_y = [(axis + CELL_SIZE) // CELL_SIZE for axis in (x + width, y + height)]
-        
-        cells_in_box = game.cells.intersection(product(range(start_x, end_x), range(start_y, end_y)))
+
+        cells_in_box = (
+            game.cells.intersection(product(range(start_x, end_x), range(start_y, end_y)))
+            if (end_x - start_x) * (end_y - start_y) <= len(game.cells) else
+            {cell for cell in game.cells if start_x <= cell[0] < end_x and start_y <= cell[1] < end_y}
+        )
 
         for cell in cells_in_box:
             if cell not in game.selected_cells:
@@ -90,6 +94,7 @@ def handle_input(game):
             elif event.key == py.K_r:
                 game.selected_cells.clear()
                 game.cells.clear()
+                game.changed_cells.clear()
                 game.neighbour_amounts.clear()
 
             elif event.key == py.K_g:
@@ -124,7 +129,8 @@ def handle_input(game):
 
             elif event.button == 3:
                 if game.paused and not keys[py.K_LSHIFT]:
-                    cell = [axis // CELL_SIZE for axis in screen_to_world(game, *event.pos)]
+                    x, y = [axis // CELL_SIZE for axis in screen_to_world(game, *event.pos)]
+                    cell = (x, y)
                     select_cell(game, cell)
 
         elif event.type == py.MOUSEWHEEL:

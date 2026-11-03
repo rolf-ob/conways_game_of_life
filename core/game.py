@@ -1,7 +1,6 @@
 import pygame as py
 
 import time
-from collections import defaultdict
 
 from core.input import handle_input
 from core.physics import update
@@ -38,7 +37,7 @@ class Game:
         self.cells = set()
         self.changed_cells = set()
         self.selected_cells = set()
-        self.neighbour_amounts = defaultdict(int)
+        self.neighbour_amounts = {}
 
         self.camera = Camera(0, 0, ZOOMS[self.zoom_index])
         self.font = py.font.SysFont("Arial", FONT_SIZE)

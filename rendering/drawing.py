@@ -59,7 +59,7 @@ def draw_debug(game, screen):
         f"FPS: {game.frame_limiter.get_fps()}",
         f"Paused: {game.paused}",
         f"Updates per second: {SPEEDS[game.speed_index]}",
-        f"Checks per update: {len(game.changed_cells)}",
+        f"Checks per update: {len(game.cell_checks)}",
         f"Live cells: {len(game.cells)}",
         f"Position: {int(game.camera.x)} / {int(game.camera.y)}",
         f"Camera zoom: {round(game.camera.zoom / 100, 4)}",
@@ -80,7 +80,7 @@ def draw(game):
 
     draw_cells(game, screen)
 
-    if game.box_start:
+    if game.box_start is not None:
         draw_selection_box(game, screen)
 
     if game.debug:
