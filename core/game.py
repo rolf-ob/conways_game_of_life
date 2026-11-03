@@ -63,7 +63,6 @@ class Game:
                 
                 if self.accumulator >= period:
                     self.accumulator = 0.0
-                    self.frame_limiter.reset()
             
             draw(self)
             py.display.flip()

@@ -8,7 +8,11 @@ class FrameLimiter:
         self.next_frame = time.perf_counter()
 
     def limit_fps(self, target_fps):
-        remaining = self.next_frame - time.perf_counter() - 0.0005
+        now = time.perf_counter()
+        remaining = self.next_frame - now - 0.0005
+
+        if self.next_frame < now:
+            self.next_frame = now
         
         if remaining > 0.001:
             time.sleep(remaining)
@@ -24,9 +28,6 @@ class FrameLimiter:
 
         while now - self.frame_times[0] >= 1:
             self.frame_times.popleft()
-
-    def reset(self):
-        self.next_frame = time.perf_counter()
 
     def get_fps(self):
         return len(self.frame_times)
