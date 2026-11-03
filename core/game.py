@@ -1,16 +1,14 @@
 import pygame as py
 
 import time
-from collections import defaultdict
 
 from core.input import handle_input
 from core.physics import update
 from rendering.drawing import draw
 from rendering.textcache import TextCache
-from entities.sprite import Sprite
 from entities.camera import Camera
 from entities.frame_limiter import FrameLimiter
-from constants import WIDTH, HEIGHT, FPS, FONT_SIZE, ZOOMS, SPEEDS, IMAGES_DIR
+from constants import WIDTH, HEIGHT, FPS, FONT_SIZE, ZOOMS, SPEEDS
 
 class Game:
     def __init__(self):
@@ -30,22 +28,16 @@ class Game:
         self.box_end = None
         self.show_grid = True
         self.debug = False
+
+        self.cells = set()
         self.active_cells = set()
-        self.selected_cells = []
-        self.cells = defaultdict(dict)
+        self.selected_cells = set()
 
         self.camera = Camera(0, 0, ZOOMS[self.zoom_index])
         self.font = py.font.SysFont("Arial", FONT_SIZE)
         self.text_cache = TextCache(self.font)
         self.frame_limiter = FrameLimiter()
         self.screen = py.display.set_mode((WIDTH, HEIGHT), py.RESIZABLE)
-
-        self.sprites = {}
-        self.load_assets()
-
-    def load_assets(self):
-        for file in IMAGES_DIR.glob("*.png"):
-            self.sprites[file.stem] = Sprite(py.image.load(str(file)).convert_alpha())
 
     def run(self):
         while self.running:

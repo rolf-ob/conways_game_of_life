@@ -21,36 +21,22 @@ def draw_cells(game, screen):
     squares_within_view = (end_x - start_x) * (end_y - start_y)
     game.total_cells = sum(len(column.values()) for column in game.cells.values())
 
-    if squares_within_view <= game.total_cells:
+    if squares_within_view <= game.total_cells: #!
         viewed_cells = [
-            (
-                game.sprites["cell"].tinted if game.cells[column][row].selected else
-                game.sprites["cell"].image,
-                world_to_screen(game, column * CELL_SIZE, row * CELL_SIZE)
-            )
-            
-            for column in range(start_x, end_x)
-            if column in game.cells
-
-            for row in range(start_y, end_y)
-            if row in game.cells[column]
+            (world_to_screen(game, column * CELL_SIZE, row * CELL_SIZE))
+            for something in something
         ]
     else:
         viewed_cells = [
-            (
-                game.sprites["cell"].tinted if game.cells[column][row].selected else
-                game.sprites["cell"].image,
-                world_to_screen(game, column * CELL_SIZE, row * CELL_SIZE)
-            )
-
-            for column in game.cells
-            if column in range(start_x, end_x)
-            
-            for row in game.cells[column]
-            if row in range(start_y, end_y)
+            (world_to_screen(game, column * CELL_SIZE, row * CELL_SIZE))
+            for something in something
         ]
 
-    screen.blits(viewed_cells)
+    outline = game.camera.zoom / 100
+    for cell in viewed_cells:
+        py.draw.rect(screen, (255,)*3, (cell[0], cell[1]))
+        if cell in game.selected_cells:
+            py.draw.rect(screen, (0,)*3, (cell[0], cell[1]), outline)
             
 def draw_selection_box(game, screen):
     x, y = world_to_screen(game,
@@ -74,7 +60,10 @@ def draw_debug(game, screen):
         f"Camera zoom: {round(game.camera.zoom / 100, 4)}",
     ]
     for i, line in enumerate(debug_screen):
-        screen.blit(game.text_cache.get_surface(line, "screen", (255,)*3), (FONT_SIZE, FONT_SIZE + i*FONT_SIZE))
+        if i != 5:
+            screen.blit(game.text_cache.get_surface(line, "screen", (255,)*3), (FONT_SIZE, FONT_SIZE + i*FONT_SIZE))
+        else:
+            screen.blit(game.font.render(line, True, (255,)*3), (FONT_SIZE, FONT_SIZE + i*FONT_SIZE))
 
 def draw(game):
     screen = game.screen

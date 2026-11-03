@@ -1,25 +1,23 @@
-from entities.cell import Cell
-
-def get_cell_condition(game, cells, x, y, active=False):
-    if (x, y) not in cells["seen"]:
-        cells["seen"].add((x, y))
+def get_cell_condition(game, cells, cell, active=False):
+    if cell not in cells["seen"]:
+        cells["seen"].add(cell)
 
         neighbor_amount = 0
-        for other_x in range(x - 1, x + 2):
-            for other_y in range(y - 1, y + 2):
-                if not (other_x == x and other_y == y):
-                    if other_x in game.cells and other_y in game.cells[other_x]:
+        for other_x in range(cell[0] - 1, cell[0] + 2):
+            for other_y in range(cell[1] - 1, cell[1] + 2):
+                if not (other_x == cell[0] and other_y == cell[1]):
+                    if (other_x, other_y) in game.cells:
                         neighbor_amount += 1
 
                     if active and (other_x, other_y) not in game.active_cells:
-                        get_cell_condition(game, cells, other_x, other_y)
+                        get_cell_condition(game, cells, (other_x, other_y))
 
-        if x in game.cells and y in game.cells[x]:
+        if cell in game.cells:
             if neighbor_amount < 2 or neighbor_amount > 3:
-                cells["dying"].append((x, y))
+                cells["dying"].add(cell)
 
         elif neighbor_amount == 3:
-            cells["healing"].append((x, y))
+            cells["healing"].add(cell)
 
 def update(game):
     cells = {
@@ -28,18 +26,14 @@ def update(game):
         "seen": set()
     }
 
-    for axis in game.active_cells:
-        get_cell_condition(game, cells, axis[0], axis[1], True)
+    for cell in game.active_cells:
+        get_cell_condition(game, cells, cell, True)
+    game.active_cells.clear()
 
-    game.active_cells = set()
+    for cell in cells["dying"]:
+        game.cells.remove(cell)
+        game.active_cells.add(cell)
 
-    for axis in cells["dying"]:
-        del game.cells[axis[0]][axis[1]]
-        if not game.cells[axis[0]]:
-            del game.cells[axis[0]]
-        
-        game.active_cells.add(axis)
-    
-    for axis in cells["healing"]:
-        game.cells[axis[0]][axis[1]] = Cell(axis[0], axis[1])
-        game.active_cells.add(axis)
+    for cell in cells["healing"]:
+        game.cells.add(cell)
+        game.active_cells.add(cell)
