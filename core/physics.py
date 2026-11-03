@@ -26,6 +26,7 @@ def update(game):
         "seen": set()
     }
 
+    active_alive = {(x, y) for y in (-1, 0, 1) for x in (-1, 0, 1)}
     for cell in game.active_cells:
         get_cell_condition(game, cells, cell, True)
     game.active_cells.clear()
