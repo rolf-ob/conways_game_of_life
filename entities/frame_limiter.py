@@ -16,7 +16,7 @@ class FrameLimiter:
         while time.perf_counter() < self.next_frame:
             pass
 
-        self.next_frame = time.perf_counter() + 1 / target_fps
+        self.next_frame += 1 / target_fps
 
     def tick(self):
         now = time.perf_counter()

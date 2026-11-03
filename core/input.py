@@ -2,19 +2,20 @@ import pygame as py
 
 from itertools import product
 
+from core.physics import update
 from core.world import move_cells, heal_cells, toggle_cell, select_cell, kill_cells
 from core.spatial import screen_to_world
-from constants import CELL_SIZE, FPS, ZOOMS, SPEEDS
+from constants import CELL_SIZE, FPS, CAMERA_SPEED, ZOOMS, SPEEDS
 
 def move_camera(game, keys):
     if keys[py.K_w]:
-        game.camera.y -= 600 / game.camera.zoom * FPS / game.frame_limiter.get_fps()
+        game.camera.y -= CAMERA_SPEED / game.camera.zoom * game.delta_time
     if keys[py.K_a]:
-        game.camera.x -= 600 / game.camera.zoom * FPS / game.frame_limiter.get_fps()
+        game.camera.x -= CAMERA_SPEED / game.camera.zoom * game.delta_time
     if keys[py.K_s]:
-        game.camera.y += 600 / game.camera.zoom * FPS / game.frame_limiter.get_fps()
+        game.camera.y += CAMERA_SPEED / game.camera.zoom * game.delta_time
     if keys[py.K_d]:
-        game.camera.x += 600 / game.camera.zoom * FPS / game.frame_limiter.get_fps()
+        game.camera.x += CAMERA_SPEED / game.camera.zoom * game.delta_time
 
 def zoom(game, y):
     game.zoom_index = max(0, min(len(ZOOMS)-1, game.zoom_index + y))
@@ -78,7 +79,6 @@ def handle_input(game):
             if event.key == py.K_SPACE:
                 game.paused = not game.paused
                 if not game.paused:
-                    game.last_update = 0
                     game.selected_cells.clear()
 
             elif event.key == py.K_q:
@@ -103,7 +103,7 @@ def handle_input(game):
             elif event.key == py.K_TAB:
                 if game.paused:
                     game.selected_cells.clear()
-                    game.step_requested = True
+                    update(game)
             
             elif event.key == py.K_F3:
                 game.debug = not game.debug
