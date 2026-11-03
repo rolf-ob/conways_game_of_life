@@ -3,9 +3,9 @@ import pygame as py
 from itertools import product
 
 from core.physics import update
-from core.world import move_cells, heal_cells, toggle_cell, select_cell, kill_cells
+from core.world import move_cells, heal_cells, heal_cell, kill_cell, select_cell
 from core.spatial import screen_to_world
-from constants import CELL_SIZE, FPS, CAMERA_SPEED, ZOOMS, SPEEDS
+from constants import CELL_SIZE, CAMERA_SPEED, ZOOMS, SPEEDS
 
 def move_camera(game, keys):
     if keys[py.K_w]:
@@ -90,6 +90,7 @@ def handle_input(game):
             elif event.key == py.K_r:
                 game.selected_cells.clear()
                 game.cells.clear()
+                game.neighbour_amounts.clear()
 
             elif event.key == py.K_g:
                 game.show_grid = not game.show_grid
@@ -98,7 +99,9 @@ def handle_input(game):
                 game.selected_cells.clear()
 
             elif event.key == py.K_BACKSPACE:
-                kill_cells(game)
+                for cell in game.selected_cells:
+                    kill_cell(game, cell)
+                game.selected_cells.clear()
 
             elif event.key == py.K_TAB:
                 if game.paused:
@@ -111,11 +114,18 @@ def handle_input(game):
         elif event.type == py.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if not keys[py.K_LSHIFT]:
-                    toggle_cell(game, *screen_to_world(game, *event.pos), True)
+                    x, y = [axis // CELL_SIZE for axis in screen_to_world(game, *event.pos)]
+                    cell = (x, y)
+
+                    if cell in game.cells:
+                        kill_cell(game, cell)
+                    else:
+                        heal_cell(game, cell)
 
             elif event.button == 3:
                 if game.paused and not keys[py.K_LSHIFT]:
-                    select_cell(game, *screen_to_world(game, *event.pos))
+                    cell = [axis // CELL_SIZE for axis in screen_to_world(game, *event.pos)]
+                    select_cell(game, cell)
 
         elif event.type == py.MOUSEWHEEL:
             zoom(game, event.y)
